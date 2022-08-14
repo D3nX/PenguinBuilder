@@ -3,12 +3,16 @@ class Hero < Omega::SpriteSheet
     SPEED = 2;
     SPEED_PICKAXE = 15;
     PICKAXE_ANGLE_RANGE = 150;
+    TIMER_INVINCIBILTY = 2.5
 
     attr_reader :hitbox, :velocity;
+    attr_accessor :bag_resources;
 
     def initialize(cam)
         super("assets/hero.png",16,24);
         @origin = Omega::Vector2.new(0.5,0.5);
+
+        load_statistics();
 
         load_animation();
         play_animation("top");
@@ -18,10 +22,13 @@ class Hero < Omega::SpriteSheet
         @hitbox = Omega::Rectangle.new(0,0,1,1);
         @velocity = Omega::Vector2.new(0,0);
 
+        @timer_invicibility = TIMER_INVINCIBILTY
+
         load_pickaxe();
 
         @is_attacking = false;
-        
+        @can_take_damage = true;
+        @is_dead = false;
         @can_draw_hitbox = false;
     end
 
@@ -29,7 +36,8 @@ class Hero < Omega::SpriteSheet
         update_velocity();
         update_hitbox();
         update_inputs();
-        update_pickaxe() #if (@is_attacking)
+        update_damage() if (!@can_take_damage)
+        update_pickaxe() if (@is_attacking)
         
     end
 
@@ -43,11 +51,42 @@ class Hero < Omega::SpriteSheet
         @hitbox_pickaxe.draw if (@can_draw_hitbox)
     end
 
+    def load_resources()
+        @bag_resources = {
+            Resource.DIRT  => 0,
+            Resource.SAND =>  0,
+            Resource.WATER => 0,
+            Resource.ROCK =>  0,
+            Resource.WOOD =>  0
+        }
+    end
+
+    def receive_damage(damage) 
+        if (@can_take_damage) then
+            @timer_invicibility = TIMER_INVINCIBILTY;
+            @hp -= damage;
+            @camera.shake(16,-1,1);
+            @is_dead = true if (@hp <= 0)
+        
+            @can_take_damage = false;
+        end
+    end
+
     def load_animation()
         add_animation("down",[0,1,2,3]);
         add_animation("left",[4,5,6,7]);
         add_animation("right", [8,9,10,11]);
         add_animation("top", [12,13,14,15]);
+    end
+
+    def load_statistics()
+        @hp_max = 100;
+        @hp = @hp_max;
+
+        @mp_max = 50;
+        @mp = @mp_max;
+
+        @attack = 5;
     end
 
     def load_pickaxe()
@@ -73,6 +112,16 @@ class Hero < Omega::SpriteSheet
         @hitbox.height = @height*@scale.y - 15;
 
         @can_draw_hitbox = !@can_draw_hitbox if Omega::just_pressed(Gosu::KB_P) #TODO To Remove
+    end
+
+    def update_damage()
+        @color = (rand(0..50) == 0) ? Gosu::Color.new(80,120,120,120) : Gosu::Color.new(200,200,200,200);
+        @timer_invicibility -= 0.1;
+
+        if (@timer_invicibility < 0) then
+            @color = Gosu::Color::WHITE;
+            @can_take_damage = true;
+        end
     end
 
     def update_inputs()
