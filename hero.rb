@@ -3,6 +3,7 @@ class Hero < Omega::SpriteSheet
     SPEED = 2;
     SPEED_PICKAXE = 15;
     PICKAXE_ANGLE_RANGE = 150;
+    ATTACK_AMPLITUDE_VARIATION = 0.1
     TIMER_INVINCIBILTY = 2.5
 
     attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :bag_resources
@@ -71,6 +72,10 @@ class Hero < Omega::SpriteSheet
             @is_dead = true if (@hp <= 0)
             @can_take_damage = false;
         end
+    end
+
+    def generate_attack()
+        value = rand((@attack-@attack*ATTACK_AMPLITUDE_VARIATION)..(@attack+@attack*ATTACK_AMPLITUDE_VARIATION))
     end
 
     def load_animation()

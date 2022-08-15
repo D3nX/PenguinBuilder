@@ -30,22 +30,23 @@ class Monster < Omega::SpriteSheet
         @death_animation_is_finished = false;
         @blink_nb = 0;
 
+        @list_text_damage = []
+
         @alpha = 255;
     end
 
     def update()
         update_velocity();
-        update_damage() if (!@can_take_damage)
+        update_damage_animation() if (!@can_take_damage)
         update_hitbox();
 
-        if (@hero.is_attacking) then
-            if (@hitbox.collides?(@hero.hitbox_pickaxe)) then receive_damage(@hero.attack);
-            end
-        end
+        if (@hero.is_attacking && @hitbox.collides?(@hero.hitbox_pickaxe)) then receive_damage(@hero.generate_attack()) end
 
         if (!@is_dead && !@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox)) then
-            @hero.receive_damage(@damage);
+             @hero.receive_damage(@damage);
         end
+
+        update_text_damage() if (@list_text_damage.length > 0)
 
         update_death() if (@is_dead && !@death_animation_is_finished)
 
@@ -53,6 +54,8 @@ class Monster < Omega::SpriteSheet
 
     def draw()
         super() if (!@death_animation_is_finished)
+
+        draw_text_damage() if (@list_text_damage.length > 0)
     end
 
     def update_velocity()
@@ -67,7 +70,7 @@ class Monster < Omega::SpriteSheet
         @hitbox.height = @height*@scale.y + @hitbox_offset.height;
     end
 
-    def update_damage()
+    def update_damage_animation()
         play_animation("HIT")
 
         @color = Gosu::Color::RED;
@@ -89,6 +92,8 @@ class Monster < Omega::SpriteSheet
 
         @hp -= damage;
 
+        @list_text_damage.push(TextDamage.new(damage,@position, 0.3));
+
         $sounds["hit_monster"].play() if (@hp > 0)
             
         @scale.x = @base_scale.x + 0.2;
@@ -104,6 +109,12 @@ class Monster < Omega::SpriteSheet
         end
 
         @can_take_damage = false;
+    end
+
+    def update_text_damage()
+        for i in 0...@list_text_damage.length
+            @list_text_damage[i].update();
+        end
     end
 
     def update_death()
@@ -126,6 +137,12 @@ class Monster < Omega::SpriteSheet
 
         if (@blink_nb >= 20) then
             @death_animation_is_finished = true;
+        end
+    end
+
+    def draw_text_damage()
+        for i in 0...@list_text_damage.length
+            @list_text_damage[i].draw();
         end
     end
 
