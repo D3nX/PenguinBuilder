@@ -6,15 +6,22 @@ class ExplorationState < Omega::State
         
         @hero = Hero.new(@camera);
         @camera.follow(@hero, 0.4)
+
+        @rockdood = Rockdood.new(@hero, @camera);
+        @rockdood.position = Omega::Vector3.new(0,-100,0);
     end
 
     def update
        @hero.update();
+
+       @rockdood.update();
     end
 
     def draw
         @camera.draw do
             @hero.draw();
+
+            @rockdood.draw();
         end
     end
 

@@ -5,7 +5,7 @@ class Hero < Omega::SpriteSheet
     PICKAXE_ANGLE_RANGE = 150;
     TIMER_INVINCIBILTY = 2.5
 
-    attr_reader :hitbox, :velocity;
+    attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :bag_resources
     attr_accessor :bag_resources;
 
     def initialize(cam)
@@ -53,21 +53,21 @@ class Hero < Omega::SpriteSheet
 
     def load_resources()
         @bag_resources = {
-            Resource.DIRT  => 0,
-            Resource.SAND =>  0,
-            Resource.WATER => 0,
-            Resource.ROCK =>  0,
-            Resource.WOOD =>  0
+            Resource::DIRT  => 0,
+            Resource::SAND  => 0,
+            Resource::WATER => 0,
+            Resource::ROCK  => 0,
+            Resource::WOOD  => 0
         }
     end
 
     def receive_damage(damage) 
         if (@can_take_damage) then
+            $sounds["hit_hero"].play();
             @timer_invicibility = TIMER_INVINCIBILTY;
             @hp -= damage;
             @camera.shake(16,-1,1);
             @is_dead = true if (@hp <= 0)
-        
             @can_take_damage = false;
         end
     end
