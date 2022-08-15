@@ -23,6 +23,8 @@ class ExplorationState < Omega::State
 
             @rockdood.draw();
         end
+
+        @hero.draw_hud();
     end
 
 end

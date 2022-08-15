@@ -6,6 +6,10 @@ class Hero < Omega::SpriteSheet
     ATTACK_AMPLITUDE_VARIATION = 0.1
     TIMER_INVINCIBILTY = 2.5
 
+    HUD_WIDTH_HP = 220;
+    HUD_WIDTH_MP = 180;
+    HUD_THICKNESS = 4;
+
     attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :bag_resources
     attr_accessor :bag_resources;
 
@@ -107,6 +111,11 @@ class Hero < Omega::SpriteSheet
     end
 
     def update_velocity()
+        if (@is_attacking) then
+            @velocity.x = 0;
+            @velocity.y = 0;
+        end
+
         @position.x += @velocity.x
         @position.y += @velocity.y
     end
@@ -191,7 +200,19 @@ class Hero < Omega::SpriteSheet
         end
 
         @pickaxe_angle_destination = @pickaxe.angle + ((@pickaxe_direction == 1) ? PICKAXE_ANGLE_RANGE : -PICKAXE_ANGLE_RANGE);
-        # puts "current pickaxe: " + @pickaxe.angle.to_s + " to: " + @pickaxe_angle_destination.to_s;
+        # puts "current angle pickaxe: " + @pickaxe.angle.to_s + " to: " + @pickaxe_angle_destination.to_s;
+    end
+
+    def draw_hud()
+        hud_pos = Omega::Vector2.new(16,16);
+
+        # HP
+        Gosu.draw_rect(hud_pos.x-HUD_THICKNESS, hud_pos.y-HUD_THICKNESS, HUD_WIDTH_HP + (2*HUD_THICKNESS), 12 + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
+        Gosu.draw_rect(hud_pos.x,hud_pos.y,(@hp * HUD_WIDTH_HP)/@hp_max,12,Gosu::Color.new(255, 10, 200, 8));
+
+        # MP
+        Gosu.draw_rect(hud_pos.x-HUD_THICKNESS, hud_pos.y-HUD_THICKNESS + 24, HUD_WIDTH_MP + (2*HUD_THICKNESS), 12 + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
+        Gosu.draw_rect(hud_pos.x,hud_pos.y + 24,(@mp * HUD_WIDTH_MP)/@mp_max,12,Gosu::Color.new(255, 10, 8, 200));
     end
 
 end
