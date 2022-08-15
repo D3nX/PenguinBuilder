@@ -22,11 +22,13 @@ class IsoMap
     end
     
     attr_reader :tileset, :width, :height
+    attr_accessor :rotation
 
     def initialize(tileset_path, width, height)
         @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT)
         @width = width
         @height = height
+        @rotation = 0
 
         @blocks = Array.new(height) { Array.new(width) { [IsoTile.new(0, 1)] } }
     end
@@ -62,18 +64,21 @@ class IsoMap
     def draw
         x, y = 0, 0
 
-        @blocks.each do |columns|
+        local_blocks = @blocks.clone
+        local_blocks = local_blocks.reverse if (@rotation == 1 or @rotation == 2) and @rotation != 3
+
+        local_blocks.each do |cols|
+            columns = cols
+            columns = cols.reverse if @rotation == 2 or @rotation == 3
             columns.each do |z_columns|
                 base_z_offset = 0
                 for tile in z_columns
                     c = base_z_offset
+                    fx = x
+                    fy = y
+                    fx, fy = fy, fx if @rotation == 1 or @rotation == 3
                     if tile.id >= 0 and tile.id < @tileset.size
-                        @tileset[tile.id].draw(x,
-                                                y - base_z_offset * tile.offset_scale,
-                                                0,
-                                                1,
-                                                1,
-                                                Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
+                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale, 0, 1, 1, Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
                         tile.offset_scale -= (tile.offset_scale - 1.0) * 0.1
                     end
                     base_z_offset += Z_OFFSET

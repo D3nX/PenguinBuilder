@@ -17,12 +17,41 @@ class Cursor < Omega::Sprite
         move(0, 1) if Omega::just_pressed(Gosu::KB_DOWN)
         move(0, -1) if Omega::just_pressed(Gosu::KB_UP)
 
+        if Omega::just_pressed(Gosu::KB_RETURN)
+            last_rotation = @isomap.rotation
+            @isomap.rotation += 1
+            @isomap.rotation %= 4
+
+            if last_rotation == 0 and @isomap.rotation == 1
+                puts("0::1!")
+                @tile_position.x = @isomap.height - @tile_position.x - 1
+            end
+
+            @position.x = @tile_position.x * IsoMap::TILE_WIDTH
+            @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)
+            @camera.follow(self, 1.0)
+
+            puts @position
+
+            puts "changing angle: #{@isomap.rotation}"
+        end
+
         if Omega::just_pressed(Gosu::KB_X)
-            if @isomap.push_block(@tile_position.x, @tile_position.y, @block_id)
+            tpos = @tile_position.clone
+            tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
+            tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
+            tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
+
+            if @isomap.push_block(tpos.x, tpos.y, @block_id)
                 @push.play()
             end
         elsif Omega::just_pressed(Gosu::KB_C)
-            if @isomap.pop_block(@tile_position.x, @tile_position.y)
+            tpos = @tile_position.clone
+            tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
+            tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
+            tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
+
+            if @isomap.pop_block(tpos.x, tpos.y)
                 @pop.play()
             end
         end
@@ -34,9 +63,17 @@ class Cursor < Omega::Sprite
     end
 
     def draw
+        # map_width = @isomap.width
+        # map_height = @isomap.height
+        # map_width, map_height = map_height, map_width if @isomap.rotation == 1 or @isomap.rotation == 3
+
+        # @tile_position.x = @tile_position.x.clamp(0, map_width - 1)
+        # @tile_position.y = @tile_position.y.clamp(0, map_height - 1)
+
         @position.x -= (@position.x - @tile_position.x * IsoMap::TILE_WIDTH) * 0.5
         @position.y -= (@position.y - @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)) * 0.5
         super()
+        @camera.follow(self, 0.5) if @lerp != 0.5
     end
 
     def draw_hud
@@ -53,8 +90,11 @@ class Cursor < Omega::Sprite
         tpos = @tile_position.clone
         tpos.x += offset_x
         tpos.y += offset_y
+        map_width = @isomap.width
+        map_height = @isomap.height
+        map_width, map_height = map_height, map_width if @isomap.rotation == 1 or @isomap.rotation == 3
         if tpos.x >= 0 and tpos.y >= 0 and
-            tpos.x < @isomap.width and tpos.y < @isomap.height
+            tpos.x < map_width and tpos.y < map_height
             set_tile_position(tpos)
         end
     end

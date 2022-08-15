@@ -16,19 +16,7 @@ module Omega
         # - :reloard => Force the API to reload the image from the hard drive
         def initialize(source, options = {})
 
-            @@images ||= {}
-
-            if source.is_a? String
-                if not options[:reload]
-                    @@images[source] ||= Gosu::Image.new(source, options)
-                else
-                    @@images[source] = Gosu::Image.new(source, options)
-                end
-
-                @image = @@images[source]
-            elsif not source.is_a? Array
-                @image = Gosu::Image.new(source, options)
-            end
+            load(source, options)
 
             @options = options
 
@@ -49,6 +37,21 @@ module Omega
             @visible = true
 
             @movable = true
+        end
+
+        def load(source, options = {})
+            @@images ||= {}
+
+            if source.is_a? String
+                if not options[:reload]
+                    @@images[source] ||= Gosu::Image.new(source, options)
+                else
+                    @@images[source] = Gosu::Image.new(source, options)
+                end
+                @image = @@images[source]
+            elsif not source.is_a? Array
+                @image = Gosu::Image.new(source, options)
+            end
         end
 
         def update; end

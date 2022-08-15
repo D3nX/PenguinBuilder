@@ -2,18 +2,19 @@ class ConstructionState < Omega::State
 
     def load_map
         @isomap = IsoMap.new("assets/ctileset.png", 18, 10)
-=begin
+
         w, h = 3, 4
         for y in 0...h
             for x in 0...w
-                if (x == 0 or x == w - 1) or (y == h - 1)
-                    @isomap.push_block(5 + x, 7, IsoMap::Block::STONE)
-                else
-                    @isomap.push_block(5 + x, 7, -1)
+                @isomap.push_block(5 + x, 7, IsoMap::Block::STONE)
+                if y == 0
+                    for d in 0..2
+                        @isomap.push_block(5 + x, 7 + d, IsoMap::Block::STONE)
+                    end
                 end
             end
         end
-=end
+
     end
 
     def load_camera
