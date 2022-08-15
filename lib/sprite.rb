@@ -16,19 +16,7 @@ module Omega
         # - :reloard => Force the API to reload the image from the hard drive
         def initialize(source, options = {})
 
-            @@images ||= {}
-
-            if source.is_a? String
-                if not options[:reload]
-                    @@images[source] ||= Gosu::Image.new(source, options)
-                else
-                    @@images[source] = Gosu::Image.new(source, options)
-                end
-
-                @image = @@images[source]
-            elsif not source.is_a? Array
-                @image = Gosu::Image.new(source, options)
-            end
+            load(source, options)
 
             @options = options
 
@@ -49,6 +37,21 @@ module Omega
             @visible = true
 
             @movable = true
+        end
+
+        def load(source, options = {})
+            @@images ||= {}
+
+            if source.is_a? String
+                if not options[:reload]
+                    @@images[source] ||= Gosu::Image.new(source, options)
+                else
+                    @@images[source] = Gosu::Image.new(source, options)
+                end
+                @image = @@images[source]
+            elsif not source.is_a? Array
+                @image = Gosu::Image.new(source, options)
+            end
         end
 
         def update; end
@@ -162,11 +165,7 @@ module Omega
         def initialize(source, width, height, options = {})
             super(source, options)
 
-            if source.is_a? Array
-                @frames = source
-            else
-                @frames = Gosu::Image.load_tiles(@image, width, height, options)
-            end
+            load_ss(source, width, height, options)
             @frames_count = @frames.size
             @current_frame = 0
             @frame_speed = 0.1
@@ -180,6 +179,16 @@ module Omega
 
             @pause = false
             @loop = true
+        end
+
+        def load_ss(source, width, height, options = {})
+            load(source, options)
+            
+            if source.is_a? Array
+                @frames = source
+            else
+                @frames = Gosu::Image.load_tiles(@image, width, height, options)
+            end
         end
 
         def draw(can_add_frame = true)
