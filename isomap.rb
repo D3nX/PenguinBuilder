@@ -10,6 +10,7 @@ class IsoMap
         STONE = 1
         SAND  = 2
         WATER = 3
+        WOOD  = 4
     end
 
     class IsoTile

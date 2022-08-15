@@ -92,7 +92,7 @@ class Cursor < Omega::Sprite
 
         if Omega::just_pressed(Gosu::KB_TAB)
             @block_id += 1
-            @block_id %= 4
+            @block_id %= 5
         end
     end
 
