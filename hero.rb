@@ -13,6 +13,7 @@ class Hero < Omega::SpriteSheet
         @origin = Omega::Vector2.new(0.5,0.5);
 
         load_statistics();
+        load_resources();
 
         load_animation();
         play_animation("top");
