@@ -165,11 +165,7 @@ module Omega
         def initialize(source, width, height, options = {})
             super(source, options)
 
-            if source.is_a? Array
-                @frames = source
-            else
-                @frames = Gosu::Image.load_tiles(@image, width, height, options)
-            end
+            load_ss(source, width, height, options)
             @frames_count = @frames.size
             @current_frame = 0
             @frame_speed = 0.1
@@ -183,6 +179,16 @@ module Omega
 
             @pause = false
             @loop = true
+        end
+
+        def load_ss(source, width, height, options = {})
+            load(source, options)
+            
+            if source.is_a? Array
+                @frames = source
+            else
+                @frames = Gosu::Image.load_tiles(@image, width, height, options)
+            end
         end
 
         def draw(can_add_frame = true)

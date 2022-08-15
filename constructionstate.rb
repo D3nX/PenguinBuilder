@@ -14,7 +14,6 @@ class ConstructionState < Omega::State
                 end
             end
         end
-
     end
 
     def load_camera
