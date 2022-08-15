@@ -17,14 +17,48 @@ class Cursor < Omega::Sprite
         move(0, 1) if Omega::just_pressed(Gosu::KB_DOWN)
         move(0, -1) if Omega::just_pressed(Gosu::KB_UP)
 
-        if Omega::just_pressed(Gosu::KB_RETURN)
+        pressed_enter = Omega::just_pressed(Gosu::KB_RETURN)
+        pressed_backspace = Omega::just_pressed(Gosu::KB_BACKSPACE)
+
+        if pressed_enter or pressed_backspace
             last_rotation = @isomap.rotation
-            @isomap.rotation += 1
+            @isomap.rotation += (Omega::just_pressed(Gosu::KB_RETURN)) ? 1 : -1
             @isomap.rotation %= 4
 
-            if last_rotation == 0 and @isomap.rotation == 1
+            if @isomap.rotation == 0
                 puts("0::1!")
-                @tile_position.x = @isomap.height - @tile_position.x - 1
+                if pressed_enter
+                    @tile_position.x, @tile_position.y = @isomap.width - @tile_position.y - 1, @tile_position.x
+                else
+                    @tile_position.x, @tile_position.y = @tile_position.y, @isomap.height - @tile_position.x - 1
+                end
+            end
+
+            if @isomap.rotation == 1
+                puts("0::1!")
+                if pressed_enter
+                    @tile_position.x, @tile_position.y = @isomap.height - @tile_position.y - 1, @tile_position.x
+                else
+                    @tile_position.x, @tile_position.y = @tile_position.y, @isomap.width - @tile_position.x - 1
+                end
+            end
+
+            if @isomap.rotation == 2
+                puts("0::1!")
+                if pressed_enter
+                    @tile_position.x, @tile_position.y = @isomap.width - @tile_position.y - 1, @tile_position.x
+                else
+                    @tile_position.x, @tile_position.y = @tile_position.y, @isomap.height - @tile_position.x - 1
+                end
+            end
+
+            if @isomap.rotation == 3
+                puts("0::1!")
+                if pressed_enter
+                    @tile_position.x, @tile_position.y = @isomap.height - @tile_position.y - 1, @tile_position.x
+                else
+                    @tile_position.x, @tile_position.y = @tile_position.y, @isomap.width - @tile_position.x - 1
+                end
             end
 
             @position.x = @tile_position.x * IsoMap::TILE_WIDTH
