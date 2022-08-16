@@ -8,6 +8,7 @@ require_relative "playstate"
 require_relative "explorationstate"
 require_relative "resource"
 require_relative "textdamage"
+require_relative "brick"
 require_relative "hero"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
@@ -24,10 +25,15 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $sounds = {
+        "attack_pickaxe" => Gosu::Sample.new("assets/sounds/attack_pickaxe.wav"),
+        "cancel" => Gosu::Sample.new("assets/sounds/cancel.wav"),
         "hit_hero" => Gosu::Sample.new("assets/sounds/hit_hero.wav"),
         "hit_monster" =>  Gosu::Sample.new("assets/sounds/hit_monster.wav"),
+        "item_collected" => Gosu::Sample.new("assets/sounds/item_collected.wav"),
         "monster_die" => Gosu::Sample.new("assets/sounds/monster_die.wav"),
-        "throw_brick" => Gosu::Sample.new("assets/sounds/throw_brick.wav")
+        "select" => Gosu::Sample.new("assets/sounds/select.wav"),
+        "throw_brick" => Gosu::Sample.new("assets/sounds/throw_brick.wav"),
+        "validate" => Gosu::Sample.new("assets/sounds/validate.wav"),
     }
 
     $inventory = {

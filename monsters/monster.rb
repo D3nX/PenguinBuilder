@@ -40,15 +40,15 @@ class Monster < Omega::SpriteSheet
         update_damage_animation() if (!@can_take_damage)
         update_hitbox();
 
-        if (@hero.is_attacking && @hitbox.collides?(@hero.hitbox_pickaxe)) then receive_damage(@hero.generate_attack()) end
-
-        if (!@is_dead && !@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox)) then
-             @hero.receive_damage(@damage);
-        end
+        check_damage() if (!@is_dead)
 
         update_text_damage() if (@list_text_damage.length > 0)
 
         update_death() if (@is_dead && !@death_animation_is_finished)
+
+        for i in 0...@list_items.length do
+            @list_items[i].update();
+        end
 
     end
 
@@ -56,6 +56,10 @@ class Monster < Omega::SpriteSheet
         super() if (!@death_animation_is_finished)
 
         draw_text_damage() if (@list_text_damage.length > 0)
+
+        for i in 0...@list_items.length do
+            @list_items[i].draw();
+        end
     end
 
     def update_velocity()
@@ -87,6 +91,22 @@ class Monster < Omega::SpriteSheet
         end
     end
 
+    def check_damage()
+        if (@hero.is_attacking && @hitbox.collides?(@hero.hitbox_pickaxe)) then receive_damage(@hero.generate_attack()) end
+
+            for i in 0...@hero.list_bricks.length do
+                if (@hero.list_bricks[i] != nil && @hitbox.collides?(@hero.list_bricks[i].hitbox)) then 
+                    damage = @hero.generate_attack() + (@hero.generate_attack()*0.5)
+                    receive_damage(damage) 
+                    @hero.list_bricks.delete_at(i);
+                end
+            end
+    
+            if (!@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox)) then
+                 @hero.receive_damage(@damage);
+            end
+    end
+
     def receive_damage(damage) 
         return if (@is_dead || !@can_take_damage)
 
@@ -104,6 +124,7 @@ class Monster < Omega::SpriteSheet
             if (!@is_dead) then
                 $sounds["monster_die"].play();
                 # spawn loot here
+                spawn_loot();
                 @is_dead = true 
             end
         end
@@ -158,10 +179,14 @@ class Monster < Omega::SpriteSheet
 
     # Use this function when monster die to define which items will spawn
     def spawn_loot()
-        for i in 0..loot_quantity
-            resource_to_obtain = rand(list_of_items[0]..list_of_items.length)
-            if (rand(0,100) <= loot_probability) then
-                loot = Loot.new(resource_to_obtain);
+        for i in 0..@loot_quantity
+            random_item_index = rand(0...@list_resources_droppable.length)
+            resource_to_obtain = @list_resources_droppable[random_item_index]
+            if (rand(0..100) <= @loot_probability) then
+                loot = Loot.new(@hero, resource_to_obtain);
+                loot.position = @position.clone;
+                range = 2;
+                loot.velocity = Omega::Vector2.new(rand(-range..range),rand(-range..range));
                 @list_items.push(loot);
             end
         end
