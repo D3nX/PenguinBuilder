@@ -9,7 +9,7 @@ class Cursor < Omega::Sprite
         @pop = Gosu::Sample.new("assets/pop.wav")
         @isomap = isomap
         @camera = camera
-        @block_id = IsoMap::Block::STONE
+        @block_id = 0
         @tile_position = Omega::Vector2.new(0, 0)
     end
 
@@ -70,8 +70,9 @@ class Cursor < Omega::Sprite
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
             tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
 
-            if @isomap.push_block(tpos.x, tpos.y, @block_id)
+            if $inventory[IsoMap::BlockNames[@block_id]] > 0 and @isomap.push_block(tpos.x, tpos.y, @block_id)
                 @push.play()
+                $inventory[IsoMap::BlockNames[@block_id]] -= 1
             end
         elsif Omega::just_pressed(Gosu::KB_C)
             tpos = @tile_position.clone
@@ -79,8 +80,10 @@ class Cursor < Omega::Sprite
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
             tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
 
-            if @isomap.pop_block(tpos.x, tpos.y)
+            popped = @isomap.pop_block(tpos.x, tpos.y)
+            if popped
                 @pop.play()
+                $inventory[IsoMap::BlockNames[popped.id]] += 1
             end
         end
 
@@ -88,6 +91,9 @@ class Cursor < Omega::Sprite
             @block_id += 1
             @block_id %= IsoMap::BlockNames.size
         end
+
+        @isomap.light.x = @position.x
+        @isomap.light.y = @position.y
     end
 
     def draw

@@ -37,6 +37,7 @@ class ItemMenu
             icon_pos = Omega::Vector2.new(@itembox.x + (@itembox.width_scaled - image.width * scale) / 2,
                                             @itembox.y + (@itembox.height_scaled - image.height * scale) / 2)
             image.draw(icon_pos.x, icon_pos.y, 1000, scale, scale)
+            Omega::DefaultFont.draw_text("#{$inventory[IsoMap::BlockNames[i]]}", x + 5, @itembox.y + 2, 1000, 0.2, 0.2)
 
             x += @size
         end
