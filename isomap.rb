@@ -11,6 +11,7 @@ class IsoMap
         SAND  = 2
         WATER = 3
         WOOD  = 4
+        GLASS = 5
     end
 
     BlockNames = [
@@ -18,7 +19,8 @@ class IsoMap
         "Stone",
         "Sand",
         "Water",
-        "Wood"
+        "Wood",
+        "Glass"
     ]
 
     RotationString = [
@@ -36,15 +38,18 @@ class IsoMap
             @offset_scale = offset_scale.to_f
         end
     end
+
+    Light = Struct.new(:x, :y, :z, :power)
     
     attr_reader :tileset, :width, :height
-    attr_accessor :rotation
+    attr_accessor :rotation, :light
 
     def initialize(tileset_path, width, height)
-        @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT)
+        @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT, :tileable => true)
         @width = width
         @height = height
         @rotation = 0
+        @light = Light.new(0, 0, 0, 1.8)
 
         @blocks = Array.new(height) { Array.new(width) { [IsoTile.new(0, 1)] } }
     end
@@ -61,16 +66,16 @@ class IsoMap
 
     def pop_block(x, y)
         if @blocks[y][x].size > 0
-            @blocks[y][x].pop
+            block = @blocks[y][x].pop
 
             while @blocks[y][x].size > 0 and @blocks[y][x].last.id == -1
                 @blocks[y][x].pop
             end
-            return true
+            return block
         else
             puts("No block left!")
         end
-        return false
+        return nil
     end
 
     def height_of(x, y)
@@ -89,7 +94,13 @@ class IsoMap
             columns.each do |z_columns|
                 base_z_offset = 0
                 for tile in z_columns
-                    c = base_z_offset
+                    c = 0
+                    if @rotation == 0 or @rotation == 2
+                        c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
+                    else
+                        c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                    end
+                    c = c.clamp(0, 255)
                     fx = x
                     fy = y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3

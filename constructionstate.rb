@@ -31,7 +31,6 @@ class ConstructionState < Omega::State
 
         @text = Omega::Text.new("Orientation", Omega::DefaultFont)
         @text.scale = Omega::Vector2.new(0.25, 0.25)
-        @text.set_position(10)
     end
 
     def load
@@ -56,8 +55,10 @@ class ConstructionState < Omega::State
     def draw_ui
         @item_menu.draw
 
-        @text.z = 1000
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
+        @text.x = (Omega.width - @text.width) / 2
+        @text.y = (Omega.height - 125)
+        @text.z = 1000
         @text.draw
     end
 

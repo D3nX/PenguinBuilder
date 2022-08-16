@@ -12,6 +12,10 @@ module Omega
         return Gosu.distance(vec1.x, vec1.y, vec2.x, vec2.y)
     end
 
+    def Omega.distance3d(vec1, vec2)
+        return Math::sqrt((vec2.x - vec1.x)**2 + (vec2.y - vec1.y)**2 + (vec2.z - vec1.z)**2)
+    end
+
     def Omega.distance_squared(vec1, vec2)
         return (vec2.x - vec1.x)**2 + (vec2.y - vec1.y)**2
     end
