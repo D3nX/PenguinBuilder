@@ -1,5 +1,9 @@
 require_relative "lib/omega"
 
+require_relative "isomap"
+require_relative "cursor"
+require_relative "itemmenu"
+
 require_relative "playstate"
 require_relative "explorationstate"
 require_relative "resource"
@@ -10,6 +14,7 @@ require_relative "monsters/loot"
 require_relative "monsters/rockdood"
 
 include Resource
+require_relative "constructionstate"
 
 Gosu::enable_undocumented_retrofication
 
