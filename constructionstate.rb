@@ -5,6 +5,7 @@ class ConstructionState < Omega::State
 
         @isomap.load_csv_layer("assets/maps/test_map_layer_0.csv")
         @isomap.load_csv_layer("assets/maps/test_map_layer_1.csv")
+        @isomap.enable_debug_tile(true)
         # @isomap.generate_empty_map()
 
         # w, h = 3, 4
@@ -46,6 +47,9 @@ class ConstructionState < Omega::State
 
     def update
         @cursor.update
+
+        tile = @isomap.tile_at(0, 0, 0)
+        tile.rect.color = Omega::Color::copy(Omega::Color::RED)
     end
 
     def draw
