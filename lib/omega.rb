@@ -21,7 +21,7 @@ module Omega
     Vector3 = Struct.new(:x, :y, :z)
     Size = Struct.new(:width, :height)
 
-    Font = Gosu::Font.new(150)
+    DefaultFont = Gosu::Font.new(150)
 
     # Basic global functions
     def Omega.log_inf(msg)
