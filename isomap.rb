@@ -31,11 +31,12 @@ class IsoMap
     ]
 
     class IsoTile
-        attr_accessor :id, :offset_scale
+        attr_accessor :id, :offset_scale, :rect
 
-        def initialize(id, offset_scale)
+        def initialize(id, offset_scale, rect)
             @id = id
             @offset_scale = offset_scale.to_f
+            @rect = rect
         end
     end
 
@@ -50,6 +51,7 @@ class IsoMap
         @height = height
         @rotation = 0
         @light = Light.new(0, 0, 0, 1.8)
+        @draw_debug_tile = false
 
         @blocks = Array.new(height) { Array.new(width) { [] } }
     end
@@ -61,10 +63,17 @@ class IsoMap
     def load_csv_layer(path, offset_scale = 1)
         data = File.read(path)
         x, y = 0, 0
+        nwidth, nheight = data.split("\n")[0].split(",").size, data.split("\n").size
+
+        if nwidth != @width or nheight != @height
+            @width = nwidth
+            @height = nheight
+            @blocks = Array.new(@height) { Array.new(@width) { [] } }
+        end
 
         data.split("\n").each do |line|
             line.split(",").each do |id|
-                push_block(x, y, id.to_i, offset_scale)
+                push_block(x, y, id.to_i, offset_scale) if id.to_i != -1
                 x += 1
             end
             x = 0
@@ -72,9 +81,17 @@ class IsoMap
         end
     end
 
+    def tile_at(x, y, z)
+        if y < @blocks.size and x < @blocks[y].size and z < @blocks[y][x].size
+            return @blocks[y][x][z]
+        end
+        return nil
+    end
+
     def push_block(x, y, id, offset_scale = 0)
         if @blocks[y][x].size < Z_OFFSET
-            @blocks[y][x] << IsoTile.new(id, offset_scale)
+            z = @blocks[y][x].size
+            @blocks[y][x] << IsoTile.new(id, offset_scale, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
             return true
         else
             puts("Cannot put any more blocks!")
@@ -98,6 +115,10 @@ class IsoMap
 
     def height_of(x, y)
         return @blocks[y][x].size * (TILE_HEIGHT - Z_OFFSET)
+    end
+
+    def enable_debug_tile(enable)
+        @draw_debug_tile = enable
     end
 
     def draw
@@ -124,6 +145,11 @@ class IsoMap
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
                     if tile.id >= 0 and tile.id < @tileset.size
                         @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale, 0, 1, 1, Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
+                        if @draw_debug_tile
+                            tile.rect.z = 1000
+                            tile.rect.color.alpha = 128
+                            tile.rect.draw
+                        end
                         tile.offset_scale -= (tile.offset_scale - 1.0) * 0.1
                     end
                     base_z_offset += Z_OFFSET
