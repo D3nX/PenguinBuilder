@@ -36,8 +36,17 @@ class Game < Omega::RenderWindow
         "validate" => Gosu::Sample.new("assets/sounds/validate.wav"),
     }
 
+    $inventory = {
+        "Grass" => 1000,
+        "Stone" => 1000,
+        "Sand" => 1000,
+        "Water" => 1000,
+        "Wood" => 1000,
+        "Glass" => 1000
+    }
+
     def load
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(ConstructionState.new)
     end
     
 end
