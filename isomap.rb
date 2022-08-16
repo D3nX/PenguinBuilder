@@ -51,7 +51,25 @@ class IsoMap
         @rotation = 0
         @light = Light.new(0, 0, 0, 1.8)
 
+        @blocks = Array.new(height) { Array.new(width) { [] } }
+    end
+
+    def generate_empty_map
         @blocks = Array.new(height) { Array.new(width) { [IsoTile.new(0, 1)] } }
+    end
+
+    def load_csv_layer(path, offset_scale = 1)
+        data = File.read(path)
+        x, y = 0, 0
+
+        data.split("\n").each do |line|
+            line.split(",").each do |id|
+                push_block(x, y, id.to_i, offset_scale)
+                x += 1
+            end
+            x = 0
+            y += 1
+        end
     end
 
     def push_block(x, y, id, offset_scale = 0)
