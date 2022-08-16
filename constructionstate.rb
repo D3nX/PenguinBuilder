@@ -1,7 +1,7 @@
 class ConstructionState < Omega::State
 
     def load_map
-        @isomap = IsoMap.new("assets/ctileset.png", 18, 10)
+        @isomap = IsoMap.new("assets/ctileset.png", 80, 80)
 
         w, h = 3, 4
         for y in 0...h
@@ -26,10 +26,19 @@ class ConstructionState < Omega::State
         @camera.follow(@cursor, 0.5)
     end
 
+    def load_ui
+        @item_menu = ItemMenu.new(@isomap, @cursor)
+
+        @text = Omega::Text.new("Orientation", Omega::DefaultFont)
+        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text.set_position(10)
+    end
+
     def load
         load_map()
         load_camera()
         load_cursor()
+        load_ui()
     end
 
     def update
@@ -41,7 +50,15 @@ class ConstructionState < Omega::State
             @isomap.draw
             @cursor.draw
         end
-        @cursor.draw_hud
+        draw_ui
+    end
+
+    def draw_ui
+        @item_menu.draw
+
+        @text.z = 1000
+        @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
+        @text.draw
     end
 
 end

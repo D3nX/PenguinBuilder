@@ -2,6 +2,7 @@ require_relative "lib/omega"
 
 require_relative "isomap"
 require_relative "cursor"
+require_relative "itemmenu"
 
 require_relative "playstate"
 require_relative "constructionstate"

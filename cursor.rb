@@ -1,5 +1,7 @@
 class Cursor < Omega::Sprite
 
+    attr_reader :block_id
+
     def initialize(isomap, camera)
         super("assets/cursor.png")
 
@@ -26,7 +28,6 @@ class Cursor < Omega::Sprite
             @isomap.rotation %= 4
 
             if @isomap.rotation == 0
-                puts("0::1!")
                 if pressed_enter
                     @tile_position.x, @tile_position.y = @isomap.width - @tile_position.y - 1, @tile_position.x
                 else
@@ -35,7 +36,6 @@ class Cursor < Omega::Sprite
             end
 
             if @isomap.rotation == 1
-                puts("0::1!")
                 if pressed_enter
                     @tile_position.x, @tile_position.y = @isomap.height - @tile_position.y - 1, @tile_position.x
                 else
@@ -44,7 +44,6 @@ class Cursor < Omega::Sprite
             end
 
             if @isomap.rotation == 2
-                puts("0::1!")
                 if pressed_enter
                     @tile_position.x, @tile_position.y = @isomap.width - @tile_position.y - 1, @tile_position.x
                 else
@@ -53,7 +52,6 @@ class Cursor < Omega::Sprite
             end
 
             if @isomap.rotation == 3
-                puts("0::1!")
                 if pressed_enter
                     @tile_position.x, @tile_position.y = @isomap.height - @tile_position.y - 1, @tile_position.x
                 else
@@ -64,10 +62,6 @@ class Cursor < Omega::Sprite
             @position.x = @tile_position.x * IsoMap::TILE_WIDTH
             @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)
             @camera.follow(self, 1.0)
-
-            puts @position
-
-            puts "changing angle: #{@isomap.rotation}"
         end
 
         if Omega::just_pressed(Gosu::KB_X)
@@ -92,7 +86,7 @@ class Cursor < Omega::Sprite
 
         if Omega::just_pressed(Gosu::KB_TAB)
             @block_id += 1
-            @block_id %= 5
+            @block_id %= IsoMap::BlockNames.size
         end
     end
 

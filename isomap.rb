@@ -13,6 +13,21 @@ class IsoMap
         WOOD  = 4
     end
 
+    BlockNames = [
+        "Grass",
+        "Stone",
+        "Sand",
+        "Water",
+        "Wood"
+    ]
+
+    RotationString = [
+        "North",
+        "West",
+        "South",
+        "East"
+    ]
+
     class IsoTile
         attr_accessor :id, :offset_scale
 
