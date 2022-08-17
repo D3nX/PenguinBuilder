@@ -12,11 +12,11 @@ class ExplorationState < Omega::State
 
         @loot = Loot.new(@hero, Resource::SAND);
 
-        @map = IsoMap.new("assets/edit_tileset.png",48*16,20*16);
+        @map = IsoMap.new("assets/ctileset.png",48*16,20*16);
         @map.load_csv_layer("assets/maps/map_plains_layer_0.csv");
         @map.load_csv_layer("assets/maps/map_plains_layer_1.csv");
         @map.load_csv_layer("assets/maps/map_plains_layer_2.csv");
-        #@map.light = nil
+        @map.light = nil
     end
 
     def update
