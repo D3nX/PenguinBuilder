@@ -107,11 +107,11 @@ class IsoMap
         return false
     end
 
-    def pop_block(x, y)
+    def pop_block(x, y, erase_invisible_block = false)
         if @blocks[y][x].size > 0
-            block = @blocks[y][x].pop
+            block = @blocks[y][x].pop if !erase_invisible_block or @blocks[y][x][-1].id == -1
 
-            while @blocks[y][x].size > 0 and @blocks[y][x].last.id == -1
+            while @blocks[y][x].size > 0 and @blocks[y][x].last.id == -1 and !erase_invisible_block
                 @blocks[y][x].pop
             end
             return block
@@ -136,6 +136,21 @@ class IsoMap
         return 0
     end
 
+    def pile_at(x, y)
+        case @rotation
+        when 0
+            return @blocks[y][x]
+        when 1
+            return @blocks[@height - x - 1][y]
+        when 2
+            return @blocks[@height - y - 1][@width - x - 1]
+        else # 3
+            return @blocks[x][@width - y - 1]
+        end
+
+        return nil
+    end
+
     def enable_debug_tile(enable)
         @draw_debug_tile = enable
     end
@@ -153,10 +168,12 @@ class IsoMap
                 base_z_offset = 0
                 for tile in z_columns
                     c = 0
-                    if @rotation == 0 or @rotation == 2
-                        c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
-                    else
-                        c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                    if @light
+                        if @rotation == 0 or @rotation == 2
+                            c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
+                        else
+                            c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                        end
                     end
                     c = c.clamp(0, 255)
                     fx = x

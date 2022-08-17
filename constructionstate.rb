@@ -34,8 +34,7 @@ class ConstructionState < Omega::State
     def load_ui
         @item_menu = ItemMenu.new(@isomap, @cursor)
 
-        @text = Omega::Text.new("Orientation", Omega::DefaultFont)
-        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text = Omega::Text.new("", Omega::DefaultFont)
     end
 
     def load
@@ -60,10 +59,33 @@ class ConstructionState < Omega::State
     def draw_ui
         @item_menu.draw
 
+        @text.scale = Omega::Vector2.new(0.25, 0.25)
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
         @text.x = (Omega.width - @text.width) / 2
         @text.y = (Omega.height - 125)
         @text.z = 1000
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
+        @text.draw
+
+        draw_controls()
+    end
+
+    def draw_controls
+        @text.scale = Omega::Vector2.new(0.15, 0.15)
+        @text.text = "Controls:\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
+        @text.x = Omega.width - @text.width - 2
+        @text.y = Omega.height - @text.height - 7
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
         @text.draw
     end
 
