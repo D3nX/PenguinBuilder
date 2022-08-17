@@ -3,9 +3,13 @@ class ConstructionState < Omega::State
     def load_map
         @isomap = IsoMap.new("assets/ctileset.png", 80, 80)
 
-        @isomap.load_csv_layer("assets/maps/test_map_layer_0.csv")
-        @isomap.load_csv_layer("assets/maps/test_map_layer_1.csv")
-        @isomap.enable_debug_tile(true)
+        quest_nb = 3
+
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_0.csv")
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_1.csv")
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_2.csv")
+
+        # @isomap.enable_debug_tile(true)
         # @isomap.generate_empty_map()
 
         # w, h = 3, 4
@@ -34,8 +38,7 @@ class ConstructionState < Omega::State
     def load_ui
         @item_menu = ItemMenu.new(@isomap, @cursor)
 
-        @text = Omega::Text.new("Orientation", Omega::DefaultFont)
-        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text = Omega::Text.new("", Omega::DefaultFont)
     end
 
     def load
@@ -47,9 +50,6 @@ class ConstructionState < Omega::State
 
     def update
         @cursor.update
-
-        tile = @isomap.tile_at(0, 0, 0)
-        tile.rect.color = Omega::Color::copy(Omega::Color::RED)
     end
 
     def draw
@@ -63,10 +63,33 @@ class ConstructionState < Omega::State
     def draw_ui
         @item_menu.draw
 
+        @text.scale = Omega::Vector2.new(0.25, 0.25)
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
         @text.x = (Omega.width - @text.width) / 2
         @text.y = (Omega.height - 125)
         @text.z = 1000
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
+        @text.draw
+
+        draw_controls()
+    end
+
+    def draw_controls
+        @text.scale = Omega::Vector2.new(0.15, 0.15)
+        @text.text = "Controls:\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
+        @text.x = Omega.width - @text.width - 2
+        @text.y = Omega.height - @text.height - 7
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
         @text.draw
     end
 

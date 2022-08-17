@@ -11,6 +11,7 @@ class Cursor < Omega::Sprite
         @camera = camera
         @block_id = 0
         @tile_position = Omega::Vector2.new(0, 0)
+        @offset = 0
     end
 
     def update
@@ -21,6 +22,8 @@ class Cursor < Omega::Sprite
 
         pressed_enter = Omega::just_pressed(Gosu::KB_RETURN)
         pressed_backspace = Omega::just_pressed(Gosu::KB_BACKSPACE)
+
+        @offset = (@isomap.height_of(@tile_position.x, @tile_position.y) - IsoMap::Z_OFFSET)
 
         if pressed_enter or pressed_backspace
             last_rotation = @isomap.rotation
@@ -60,28 +63,35 @@ class Cursor < Omega::Sprite
             end
 
             @position.x = @tile_position.x * IsoMap::TILE_WIDTH
-            @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)
+            @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET) - @offset
             @camera.follow(self, 1.0)
         end
 
-        if Omega::just_pressed(Gosu::KB_X)
+        place_invisible_block = Omega::just_pressed(Gosu::KB_B)
+        erase_invisible_block = Omega::just_pressed(Gosu::KB_N)
+        if Omega::just_pressed(Gosu::KB_X) or place_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
             tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
 
-            if $inventory[IsoMap::BlockNames[@block_id]] > 0 and @isomap.push_block(tpos.x, tpos.y, @block_id)
-                @push.play()
-                $inventory[IsoMap::BlockNames[@block_id]] -= 1
+            block = @block_id
+            block = -1 if place_invisible_block
+
+            if (place_invisible_block or $inventory[IsoMap::BlockNames[@block_id]] > 0) and @isomap.push_block(tpos.x, tpos.y, block)
+                if not place_invisible_block
+                    @push.play()
+                    $inventory[IsoMap::BlockNames[@block_id]] -= 1
+                end
             end
-        elsif Omega::just_pressed(Gosu::KB_C)
+        elsif Omega::just_pressed(Gosu::KB_C) or erase_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
             tpos.x, tpos.y = @isomap.width - tpos.y - 1, tpos.x if @isomap.rotation == 3
 
-            popped = @isomap.pop_block(tpos.x, tpos.y)
-            if popped
+            popped = @isomap.pop_block(tpos.x, tpos.y, erase_invisible_block)
+            if popped and !erase_invisible_block
                 @pop.play()
                 $inventory[IsoMap::BlockNames[popped.id]] += 1
             end
@@ -92,8 +102,9 @@ class Cursor < Omega::Sprite
             @block_id %= IsoMap::BlockNames.size
         end
 
-        @isomap.light.x = @position.x
-        @isomap.light.y = @position.y
+        @isomap.light = nil
+        # @isomap.light.x = @position.x
+        # @isomap.light.y = @position.y
     end
 
     def draw
@@ -103,9 +114,9 @@ class Cursor < Omega::Sprite
 
         # @tile_position.x = @tile_position.x.clamp(0, map_width - 1)
         # @tile_position.y = @tile_position.y.clamp(0, map_height - 1)
-
+    
         @position.x -= (@position.x - @tile_position.x * IsoMap::TILE_WIDTH) * 0.5
-        @position.y -= (@position.y - @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)) * 0.5
+        @position.y -= (@position.y - (@tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET) - @offset)) * 0.5
         super()
         @camera.follow(self, 0.5) if @lerp != 0.5
     end
@@ -121,6 +132,10 @@ class Cursor < Omega::Sprite
     end
 
     def move(offset_x, offset_y)
+        pile = @isomap.pile_at(@tile_position.x, @tile_position.y)
+        if pile and pile.size > 0 && pile.last.id == -1
+            @isomap.pop_block(@tile_position.x, @tile_position.y)
+        end
         tpos = @tile_position.clone
         tpos.x += offset_x
         tpos.y += offset_y
