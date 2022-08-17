@@ -4,6 +4,7 @@ require_relative "isomap"
 require_relative "cursor"
 require_relative "itemmenu"
 
+require_relative "queststate"
 require_relative "playstate"
 require_relative "explorationstate"
 require_relative "resource"
@@ -37,16 +38,24 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 1000,
-        "Stone" => 1000,
-        "Sand" => 1000,
-        "Water" => 1000,
-        "Wood" => 1000,
-        "Glass" => 1000
+        "Grass" => 7,
+        "Stone" => 2,
+        "Sand" => 6,
+        "Water" => 1,
+        "Wood" => 3,
+        "Glass" => 4
     }
 
+    $quest_name = [
+        "Fountain",
+        "House",
+        "Bigger House"
+    ]
+
+    $quest = 1
+
     def load
-        Omega.set_state(ConstructionState.new)
+        Omega.set_state(QuestState.new)
     end
     
 end

@@ -1,16 +1,16 @@
 class ConstructionState < Omega::State
 
     def load_map
-        @isomap = IsoMap.new("assets/ctileset.png", 80, 80)
+        @isomap = IsoMap.new("assets/ctileset.png", 25, 25)
 
         quest_nb = 3
 
-        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_0.csv")
-        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_1.csv")
-        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_2.csv")
+        # @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_0.csv")
+        # @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_1.csv")
+        # @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_2.csv")
 
         # @isomap.enable_debug_tile(true)
-        # @isomap.generate_empty_map()
+        @isomap.generate_empty_map()
 
         # w, h = 3, 4
         # for y in 0...h
@@ -81,7 +81,7 @@ class ConstructionState < Omega::State
 
     def draw_controls
         @text.scale = Omega::Vector2.new(0.15, 0.15)
-        @text.text = "Controls:\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
+        @text.text = "Controls:\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)

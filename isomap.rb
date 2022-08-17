@@ -12,6 +12,7 @@ class IsoMap
         WATER = 3
         WOOD  = 4
         GLASS = 5
+        DIRT  = 6
     end
 
     module Rotation
@@ -27,7 +28,8 @@ class IsoMap
         "Sand",
         "Water",
         "Wood",
-        "Glass"
+        "Glass",
+        "Dirt"
     ]
 
     RotationString = [
@@ -51,7 +53,7 @@ class IsoMap
     Light = Struct.new(:x, :y, :z, :power)
     
     attr_reader :tileset, :width, :height
-    attr_accessor :rotation, :light
+    attr_accessor :position, :rotation, :light, :margin
 
     def initialize(tileset_path, width, height)
         @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT, :tileable => true)
@@ -60,15 +62,22 @@ class IsoMap
         @rotation = 0
         @light = Light.new(0, 0, 0, 1.8)
         @draw_debug_tile = false
+        @margin = 0
+        @position = Omega::Vector3.new(0, 0, 0)
 
         @blocks = Array.new(height) { Array.new(width) { [] } }
     end
 
     def generate_empty_map
-        @blocks = Array.new(height) { Array.new(width) { [IsoTile.new(0, 1)] } }
+        @blocks = Array.new(height) { Array.new(width) { [] } }
+        for x in 0...width
+            for y in 0...height
+                push_block(x, y, Block::GRASS, 1)
+            end
+        end
     end
 
-    def load_csv_layer(path, offset_scale = 1)
+    def load_csv_layer(path, offset_scale = 1.0)
         data = File.read(path)
         x, y = 0, 0
         nwidth, nheight = data.split("\n")[0].split(",").size, data.split("\n").size
@@ -166,7 +175,8 @@ class IsoMap
             columns = cols.reverse if @rotation == 2 or @rotation == 3
             columns.each do |z_columns|
                 base_z_offset = 0
-                for tile in z_columns
+                for i in 0...z_columns.size
+                    tile = z_columns[i]
                     c = 0
                     if @light
                         if @rotation == 0 or @rotation == 2
@@ -176,11 +186,11 @@ class IsoMap
                         end
                     end
                     c = c.clamp(0, 255)
-                    fx = x
-                    fy = y
+                    fx = x + @position.x
+                    fy = y + @position.y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
                     if tile.id >= 0 and tile.id < @tileset.size
-                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale, 0, 1, 1, Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
+                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale - i * @margin, 0, 1, 1, Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
                         if @draw_debug_tile
                             tile.rect.z = 1000
                             tile.rect.color.alpha = 128
@@ -195,6 +205,27 @@ class IsoMap
             x = 0
             y += TILE_HEIGHT - Z_OFFSET
         end
+    end
+
+    def get_ressource_list
+        ressources = {
+            "Grass" => 0,
+            "Stone" => 0,
+            "Sand" => 0,
+            "Water" => 0,
+            "Wood" => 0,
+            "Glass" => 0,
+            "Dirt" => 0
+        }
+
+        @blocks.each do |cols|
+            cols.each do |z_columns|
+                for tile in z_columns
+                    ressources[BlockNames[tile.id]] += 1 if tile.id != -1
+                end
+            end
+        end
+        return ressources
     end
 
 end
