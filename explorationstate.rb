@@ -11,6 +11,12 @@ class ExplorationState < Omega::State
         @rockdood.position = Omega::Vector3.new(0,-100,0);
 
         @loot = Loot.new(@hero, Resource::SAND);
+
+        @map = IsoMap.new("assets/edit_tileset.png",48*16,20*16);
+        @map.load_csv_layer("assets/maps/map_plains_layer_0.csv");
+        @map.load_csv_layer("assets/maps/map_plains_layer_1.csv");
+        @map.load_csv_layer("assets/maps/map_plains_layer_2.csv");
+        #@map.light = nil
     end
 
     def update
@@ -23,6 +29,8 @@ class ExplorationState < Omega::State
 
     def draw
         @camera.draw do
+            @map.draw();
+
             @hero.draw();
 
             @rockdood.draw();

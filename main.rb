@@ -46,7 +46,7 @@ class Game < Omega::RenderWindow
     }
 
     def load
-        Omega.set_state(ConstructionState.new)
+        Omega.set_state(ExplorationState.new)
     end
     
 end
