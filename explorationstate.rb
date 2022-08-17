@@ -9,7 +9,13 @@ class ExplorationState < Omega::State
         @camera.follow(@hero, 0.4)
 
         @rockdood = Rockdood.new(@hero, @camera);
-        @rockdood.position = Omega::Vector3.new(22*16,12*16,0);
+        @rockdood.position = Omega::Vector3.new(22*16,5*16,0);
+
+        @breakable_rock = BreakableRock.new(@hero, @camera)
+        @breakable_rock.position = Omega::Vector3.new(18*16,12*16,0);
+
+        @breakable_tree = BreakableTree.new(@hero, @camera)
+        @breakable_tree.position = Omega::Vector3.new(10*16,11*16,0);
 
         @map = IsoMap.new("assets/ctileset.png",48*16,20*16);
         @map.load_csv_layer("assets/maps/map_plains_layer_0.csv");
@@ -23,16 +29,22 @@ class ExplorationState < Omega::State
 
        @rockdood.update();
 
+       @breakable_rock.update();
+       @breakable_tree.update();
+
        update_collision_with_map();
     end
 
     def draw()
-        @camera.draw do
+        @camera.draw() do
             @map.draw();
 
             @hero.draw();
 
             @rockdood.draw();
+
+            @breakable_rock.draw()
+            @breakable_tree.draw();
         end
 
         @hero.draw_hud();

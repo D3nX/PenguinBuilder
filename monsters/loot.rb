@@ -1,9 +1,12 @@
 class Loot < Omega::SpriteSheet
 
-    TIMER_BEFORE_BEING_COLLECTABLE = 0.16
-    MIN_SCALE = 0.4
-    MAX_SCALE = 1.2
+    SPEED = 4;
 
+    MIN_SCALE = 0.6
+    MAX_SCALE = 1.5
+
+    TIMER_BEFORE_BEING_COLLECTABLE = 0.12
+    TIMER_BEFORE_GOING_TOWARD_HERO = 0.5;
 
     attr_reader :is_collected
     attr_accessor :velocity
@@ -24,6 +27,7 @@ class Loot < Omega::SpriteSheet
         @is_collected = false;
 
         @timer_before_being_collectable = TIMER_BEFORE_BEING_COLLECTABLE;
+        @timer_before_going_toward_hero = TIMER_BEFORE_GOING_TOWARD_HERO;
     end
 
     def load_animation()
@@ -51,7 +55,9 @@ class Loot < Omega::SpriteSheet
         @timer_before_being_collectable -= 0.01
 
         if (@timer_before_being_collectable < 0) then
-            @velocity.x = @velocity.y = 0;
+            if (@timer_before_going_toward_hero > 0) then
+                @velocity.x = @velocity.y = 0 
+            end
             @timer_before_being_collectable = -1;
         end
 
@@ -59,6 +65,17 @@ class Loot < Omega::SpriteSheet
             @hero.collect_resource(@resource)
             $sounds["item_collected"].play();
             @is_collected = true;
+        end
+
+        @timer_before_going_toward_hero -= 0.01
+
+        if (@timer_before_going_toward_hero < 0) then
+            @timer_before_going_toward_hero = -1;
+
+            @velocity.x = -SPEED if (@hero.hitbox.x + @hero.hitbox.width*0.5 < @position.x)
+            @velocity.x = SPEED if (@hero.hitbox.x + @hero.hitbox.width*0.5 > @position.x)
+            @velocity.y = -SPEED if (@hero.hitbox.y + @hero.hitbox.height*0.5 < @position.y)
+            @velocity.y = SPEED if (@hero.hitbox.y + @hero.hitbox.height*0.5 > @position.y)
         end
     end
 
