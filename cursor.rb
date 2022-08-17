@@ -11,6 +11,7 @@ class Cursor < Omega::Sprite
         @camera = camera
         @block_id = 0
         @tile_position = Omega::Vector2.new(0, 0)
+        @offset = 0
     end
 
     def update
@@ -21,6 +22,8 @@ class Cursor < Omega::Sprite
 
         pressed_enter = Omega::just_pressed(Gosu::KB_RETURN)
         pressed_backspace = Omega::just_pressed(Gosu::KB_BACKSPACE)
+
+        @offset = (@isomap.height_of(@tile_position.x, @tile_position.y) - IsoMap::Z_OFFSET)
 
         if pressed_enter or pressed_backspace
             last_rotation = @isomap.rotation
@@ -60,7 +63,7 @@ class Cursor < Omega::Sprite
             end
 
             @position.x = @tile_position.x * IsoMap::TILE_WIDTH
-            @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)
+            @position.y = @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET) - @offset
             @camera.follow(self, 1.0)
         end
 
@@ -103,9 +106,9 @@ class Cursor < Omega::Sprite
 
         # @tile_position.x = @tile_position.x.clamp(0, map_width - 1)
         # @tile_position.y = @tile_position.y.clamp(0, map_height - 1)
-
+    
         @position.x -= (@position.x - @tile_position.x * IsoMap::TILE_WIDTH) * 0.5
-        @position.y -= (@position.y - @tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET)) * 0.5
+        @position.y -= (@position.y - (@tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET) - @offset)) * 0.5
         super()
         @camera.follow(self, 0.5) if @lerp != 0.5
     end
