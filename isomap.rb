@@ -14,6 +14,13 @@ class IsoMap
         GLASS = 5
     end
 
+    module Rotation
+        NORTH   = 0
+        WEST    = 1
+        SOUTH   = 2
+        EAST    = 3
+    end
+
     BlockNames = [
         "Grass",
         "Stone",
@@ -31,10 +38,11 @@ class IsoMap
     ]
 
     class IsoTile
-        attr_accessor :id, :offset_scale, :rect
+        attr_accessor :id, :z, :offset_scale, :rect
 
-        def initialize(id, offset_scale, rect)
+        def initialize(id, z, offset_scale, rect)
             @id = id
+            @z = z
             @offset_scale = offset_scale.to_f
             @rect = rect
         end
@@ -81,7 +89,7 @@ class IsoMap
         end
     end
 
-    def tile_at(x, y, z)
+    def tile_at(x, y, z = -1)
         if y < @blocks.size and x < @blocks[y].size and z < @blocks[y][x].size
             return @blocks[y][x][z]
         end
@@ -91,7 +99,7 @@ class IsoMap
     def push_block(x, y, id, offset_scale = 0)
         if @blocks[y][x].size < Z_OFFSET
             z = @blocks[y][x].size
-            @blocks[y][x] << IsoTile.new(id, offset_scale, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
+            @blocks[y][x] << IsoTile.new(id, offset_scale, z, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
             return true
         else
             puts("Cannot put any more blocks!")
@@ -99,11 +107,11 @@ class IsoMap
         return false
     end
 
-    def pop_block(x, y)
+    def pop_block(x, y, erase_invisible_block = false)
         if @blocks[y][x].size > 0
-            block = @blocks[y][x].pop
+            block = @blocks[y][x].pop if !erase_invisible_block or @blocks[y][x][-1].id == -1
 
-            while @blocks[y][x].size > 0 and @blocks[y][x].last.id == -1
+            while @blocks[y][x].size > 0 and @blocks[y][x].last.id == -1 and !erase_invisible_block
                 @blocks[y][x].pop
             end
             return block
@@ -114,7 +122,33 @@ class IsoMap
     end
 
     def height_of(x, y)
-        return @blocks[y][x].size * (TILE_HEIGHT - Z_OFFSET)
+        case @rotation
+        when 0
+            return @blocks[y][x].size * Z_OFFSET
+        when 1
+            return @blocks[@height - x - 1][y].size * Z_OFFSET
+        when 2
+            return @blocks[@height - y - 1][@width - x - 1].size * Z_OFFSET
+        else # 3
+            return @blocks[x][@width - y - 1].size * Z_OFFSET
+        end
+
+        return 0
+    end
+
+    def pile_at(x, y)
+        case @rotation
+        when 0
+            return @blocks[y][x]
+        when 1
+            return @blocks[@height - x - 1][y]
+        when 2
+            return @blocks[@height - y - 1][@width - x - 1]
+        else # 3
+            return @blocks[x][@width - y - 1]
+        end
+
+        return nil
     end
 
     def enable_debug_tile(enable)
@@ -134,10 +168,12 @@ class IsoMap
                 base_z_offset = 0
                 for tile in z_columns
                     c = 0
-                    if @rotation == 0 or @rotation == 2
-                        c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
-                    else
-                        c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                    if @light
+                        if @rotation == 0 or @rotation == 2
+                            c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
+                        else
+                            c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                        end
                     end
                     c = c.clamp(0, 255)
                     fx = x
