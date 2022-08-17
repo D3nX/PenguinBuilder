@@ -3,8 +3,12 @@ class ConstructionState < Omega::State
     def load_map
         @isomap = IsoMap.new("assets/ctileset.png", 80, 80)
 
-        @isomap.load_csv_layer("assets/maps/test_map_layer_0.csv")
-        @isomap.load_csv_layer("assets/maps/test_map_layer_1.csv")
+        quest_nb = 3
+
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_0.csv")
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_1.csv")
+        @isomap.load_csv_layer("assets/maps/quests/quest_#{quest_nb}/quest_#{quest_nb}_layer_2.csv")
+
         # @isomap.enable_debug_tile(true)
         # @isomap.generate_empty_map()
 
