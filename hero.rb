@@ -3,14 +3,20 @@ class Hero < Omega::SpriteSheet
     SPEED = 2;
     SPEED_PICKAXE = 15;
     PICKAXE_ANGLE_RANGE = 150;
-    ATTACK_AMPLITUDE_VARIATION = 0.1
+    ATTACK_AMPLITUDE_VARIATION = 0.2
     TIMER_INVINCIBILTY = 2.5
+    TIMER_WAIT_BEFORE_REFILL_ENERGY = 1.2
+    ENERGY_COST = 4;
+    MP_COST = 3;
 
     HUD_WIDTH_HP = 220;
     HUD_WIDTH_MP = 180;
+    HUD_WIDTH_ENERGY = 140;
+    HUD_ENERGY_BLINK_FREQUENCY = 0.04
     HUD_THICKNESS = 4;
+    
 
-    attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :bag_resources
+    attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
     attr_accessor :bag_resources;
 
     def initialize(cam)
@@ -19,6 +25,7 @@ class Hero < Omega::SpriteSheet
 
         load_statistics();
         load_resources();
+        load_hud_elements();
 
         load_animation();
         play_animation("top");
@@ -36,6 +43,8 @@ class Hero < Omega::SpriteSheet
         @can_take_damage = true;
         @is_dead = false;
         @can_draw_hitbox = false;
+
+        @list_bricks = [];
     end
 
     def update()
@@ -44,13 +53,21 @@ class Hero < Omega::SpriteSheet
         update_inputs();
         update_damage() if (!@can_take_damage)
         update_pickaxe() if (@is_attacking)
+        update_energy();
+
+        for i in 0...list_bricks.length do
+            list_bricks[i].update();
+        end
         
     end
 
     def draw()
         super();
-
         @pickaxe.draw() if @is_attacking
+
+        for i in 0...list_bricks.length do
+            list_bricks[i].draw();
+        end
 
         # DEBUG
         @hitbox.draw if (@can_draw_hitbox)
@@ -67,6 +84,19 @@ class Hero < Omega::SpriteSheet
         }
     end
 
+    def collect_resource(resource)
+        case resource
+        when Resource::DIRT  
+        when Resource::WATER 
+        when Resource::ROCK  
+        when Resource::WOOD  
+            @bag_resources[resource] += 1;
+        when Resource::MANA 
+            @mp += 5;
+            @mp = @mp_max if (@mp >= @mp_max)
+        end
+    end
+
     def receive_damage(damage) 
         if (@can_take_damage) then
             $sounds["hit_hero"].play();
@@ -79,7 +109,7 @@ class Hero < Omega::SpriteSheet
     end
 
     def generate_attack()
-        value = rand((@attack-@attack*ATTACK_AMPLITUDE_VARIATION)..(@attack+@attack*ATTACK_AMPLITUDE_VARIATION))
+        return rand((@attack-@attack*ATTACK_AMPLITUDE_VARIATION)..(@attack+@attack*ATTACK_AMPLITUDE_VARIATION))
     end
 
     def load_animation()
@@ -96,6 +126,10 @@ class Hero < Omega::SpriteSheet
         @mp_max = 50;
         @mp = @mp_max;
 
+        @energy_max = 80;
+        @energy = @energy_max;
+        @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
+
         @attack = 5;
     end
 
@@ -108,6 +142,25 @@ class Hero < Omega::SpriteSheet
         @pickaxe_direction = -1;
 
         @hitbox_pickaxe = Omega::Rectangle.new(0,0,1,1);  
+    end
+
+    def load_hud_elements()
+        @icon_heart = Omega::Sprite.new("assets/icon_heart.png")
+        @icon_heart.origin = Omega::Vector2.new(0.5,0.5);
+        @icon_heart.scale = Omega::Vector2.new(2,2);
+        @icon_heart.position = Omega::Vector3.new(24, 24, 0);
+
+        @icon_brick = Omega::Sprite.new("assets/icon_brick.png")
+        @icon_brick.origin = Omega::Vector2.new(0.5,0.5);
+        @icon_brick.scale = Omega::Vector2.new(2,2);
+        @icon_brick.position = Omega::Vector3.new(24, 56, 0);
+
+        @icon_pickaxe = Omega::Sprite.new("assets/icon_pickaxe.png");
+        @icon_pickaxe.origin = Omega::Vector2.new(0.5,0.5);
+        @icon_pickaxe.scale = Omega::Vector2.new(2,2);
+        @icon_pickaxe.position = Omega::Vector3.new(24, 88, 0);
+        @icon_pickaxe_alpha = 255;
+        @timer_energy_blink = 0;
     end
 
     def update_velocity()
@@ -158,10 +211,22 @@ class Hero < Omega::SpriteSheet
             play_animation("down") if @current_animation != "down";
         end
 
-        # pickaxe
-        if (Omega::just_pressed(Gosu::KB_X)) then
+        # Pickaxe
+        if (@energy >= ENERGY_COST && Omega::just_pressed(Gosu::KB_X)) then
             @is_attacking = true;
+            $sounds["attack_pickaxe"].play();
+            @energy -= ENERGY_COST;
+            @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
+            @energy = 0 if (@energy <= 0) 
+            
             define_position_pickaxe();
+        end
+
+        # Bricks
+        if (@mp >= MP_COST && Omega::just_pressed(Gosu::KB_C)) then
+            @mp -= MP_COST;
+            @mp = 0 if (@mp <= 0)
+            @list_bricks.push(Brick.new(self));
         end
 
     end
@@ -203,16 +268,48 @@ class Hero < Omega::SpriteSheet
         # puts "current angle pickaxe: " + @pickaxe.angle.to_s + " to: " + @pickaxe_angle_destination.to_s;
     end
 
+    def update_energy()
+        if (@energy < ENERGY_COST) then
+            @timer_energy_blink -= 0.01;
+
+            if (@timer_energy_blink < 0) then
+                @icon_pickaxe_alpha = (@icon_pickaxe_alpha >= 150) ? 40 : 160;
+                @timer_energy_blink = HUD_ENERGY_BLINK_FREQUENCY;
+            end
+        end
+
+        @timer_wait_before_refill_energy -= 0.01;
+
+        if (@timer_wait_before_refill_energy < 0) then
+            @energy += 1;
+            @icon_pickaxe_alpha = 255;
+            if (@energy >= @energy_max) then
+                @energy = @energy_max;
+            end
+        end
+    end
+
     def draw_hud()
-        hud_pos = Omega::Vector2.new(16,16);
+        size_y = 12;
 
         # HP
-        Gosu.draw_rect(hud_pos.x-HUD_THICKNESS, hud_pos.y-HUD_THICKNESS, HUD_WIDTH_HP + (2*HUD_THICKNESS), 12 + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
-        Gosu.draw_rect(hud_pos.x,hud_pos.y,(@hp * HUD_WIDTH_HP)/@hp_max,12,Gosu::Color.new(255, 10, 200, 8));
+        @icon_heart.draw();
+        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled - HUD_THICKNESS, @icon_heart.y - HUD_THICKNESS - size_y*0.5, HUD_WIDTH_HP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
+        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled, @icon_heart.y - size_y*0.5,(@hp * HUD_WIDTH_HP)/@hp_max,size_y,Gosu::Color.new(255, 10, 200, 8));
 
         # MP
-        Gosu.draw_rect(hud_pos.x-HUD_THICKNESS, hud_pos.y-HUD_THICKNESS + 24, HUD_WIDTH_MP + (2*HUD_THICKNESS), 12 + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
-        Gosu.draw_rect(hud_pos.x,hud_pos.y + 24,(@mp * HUD_WIDTH_MP)/@mp_max,12,Gosu::Color.new(255, 10, 8, 200));
+        @icon_brick.draw();
+
+        alpha_mp = (@mp < MP_COST) ? 60 : 255
+
+        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled - HUD_THICKNESS, @icon_brick.y-HUD_THICKNESS - size_y*0.5, HUD_WIDTH_MP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(alpha_mp,255,255,255))
+        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled, @icon_brick.y - size_y*0.5,(@mp * HUD_WIDTH_MP)/@mp_max,size_y,Gosu::Color.new(alpha_mp, 10, 8, 200));
+
+        # Energy
+        @icon_pickaxe.draw();
+        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled - HUD_THICKNESS, @icon_pickaxe.y - size_y*0.5 - HUD_THICKNESS, HUD_WIDTH_ENERGY + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(@icon_pickaxe_alpha,255,255,255));
+        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled, @icon_pickaxe.y - size_y*0.5,(@energy * HUD_WIDTH_ENERGY)/@energy_max,size_y, Gosu::Color.new(@icon_pickaxe_alpha, 255, 127, 39));
+
     end
 
 end

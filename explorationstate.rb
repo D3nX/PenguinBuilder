@@ -9,12 +9,16 @@ class ExplorationState < Omega::State
 
         @rockdood = Rockdood.new(@hero, @camera);
         @rockdood.position = Omega::Vector3.new(0,-100,0);
+
+        @loot = Loot.new(@hero, Resource::SAND);
     end
 
     def update
        @hero.update();
 
        @rockdood.update();
+
+       @loot.update();
     end
 
     def draw
@@ -22,6 +26,8 @@ class ExplorationState < Omega::State
             @hero.draw();
 
             @rockdood.draw();
+
+            @loot.draw();
         end
 
         @hero.draw_hud();
