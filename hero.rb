@@ -16,8 +16,8 @@ class Hero < Omega::SpriteSheet
     HUD_THICKNESS = 4;
     
 
-    attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
-    attr_accessor :bag_resources;
+    attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
+    attr_accessor :velocity, :bag_resources;
 
     def initialize(cam)
         super("assets/hero.png",16,24);
