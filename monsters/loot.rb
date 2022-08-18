@@ -6,7 +6,7 @@ class Loot < Omega::SpriteSheet
     MAX_SCALE = 1.5
 
     TIMER_BEFORE_BEING_COLLECTABLE = 0.12
-    TIMER_BEFORE_GOING_TOWARD_HERO = 0.5;
+    TIMER_BEFORE_GOING_TOWARD_HERO = 0.8;
 
     attr_reader :is_collected
     attr_accessor :velocity
@@ -32,17 +32,19 @@ class Loot < Omega::SpriteSheet
 
     def load_animation()
         case @resource
-        when Resource::DIRT  
+        when "Grass"  
             add_animation("IDLE", [0])
-        when Resource::SAND  
-            add_animation("IDLE", [2])
-        when Resource::WATER 
-            add_animation("IDLE", [3])
-        when Resource::ROCK  
+        when "Stone"  
             add_animation("IDLE", [1])
-        when Resource::WOOD  
+        when "Sand"
+            add_animation("IDLE", [2])
+        when "Water" 
+            add_animation("IDLE", [3])
+        when "Wood"  
             add_animation("IDLE", [4])
-        when Resource::MANA 
+        when "Glass"
+            add_animation("IDLE", [5])
+        when "Mana" 
              add_animation("IDLE", [6])
         end
     end
@@ -62,7 +64,7 @@ class Loot < Omega::SpriteSheet
         end
 
         if (!@is_collected && @timer_before_being_collectable < 0 && @hitbox.collides?(@hero.hitbox)) then
-            @hero.collect_resource(@resource)
+            @hero.collect_resource(@resource.to_s)
             $sounds["item_collected"].play();
             @is_collected = true;
         end
@@ -81,7 +83,6 @@ class Loot < Omega::SpriteSheet
 
     def draw()
         super() if (!@is_collected)
-        
     end
 
     def update_velocity()

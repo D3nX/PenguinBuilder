@@ -6,17 +6,16 @@ require_relative "itemmenu"
 
 require_relative "playstate"
 require_relative "explorationstate"
-require_relative "resource"
 require_relative "textdamage"
 require_relative "hero/brick"
 require_relative "hero/hero"
+require_relative "hero/lootinfo"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
 
-include Resource
 require_relative "constructionstate"
 
 Gosu::enable_undocumented_retrofication

@@ -2,7 +2,7 @@ class BreakableRock < Monster
 
     def initialize(hero, camera)
         super(hero, camera, "assets/breakable_rock.png", 32, 32, 50, 0)
-        set_loot(15,[Resource::ROCK], 90)
+        set_loot(15,["Stone"], 90)
 
         # Every monsters have to possess a HIT and DIE animation
         add_animation("IDLE", [0]);
