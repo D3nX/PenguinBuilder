@@ -31,13 +31,15 @@ class ConstructionState < Omega::State
     end
 
     def load_cursor
-        @cursor = Cursor.new(@isomap, @camera)
+        @notification = Notification.new()
+        @notification.launch(["Hi, just a little tip:", "If the quest doesn't ask you grass tiles as a base,", "feel free to dig them!"], 150)
+        
+        @cursor = Cursor.new(@isomap, @camera, @notification)
         @camera.follow(@cursor, 0.5)
     end
 
     def load_ui
         @item_menu = ItemMenu.new(@isomap, @cursor)
-
         @text = Omega::Text.new("", Omega::DefaultFont)
     end
 
@@ -94,6 +96,8 @@ class ConstructionState < Omega::State
         @text.draw
 
         draw_controls()
+
+        @notification.draw
     end
 
     def draw_controls

@@ -7,9 +7,9 @@ class QuestState < Omega::State
     end
 
     def load_map
-        @isomap = $quests_maps[$quest - 1]
+        @isomap = $quests_maps[@c_quest - 1]
 
-        @available = $quest_status[$quest_status.keys()[$quest - 1]]["available"]
+        @available = $quest_status[$quest_status.keys()[@c_quest - 1]]["available"]
         @isomap.color = Omega::Color::copy(Omega::Color::WHITE)
         @isomap.color = Omega::Color::copy(Omega::Color::BLACK) if not @available
         @ressources = @isomap.get_ressource_list
@@ -25,21 +25,28 @@ class QuestState < Omega::State
         @text = Omega::Text.new("", Gosu::Font.new(60))
     end
 
-    def load
+    def load(reset_c_quest = true)
+        @c_quest = $quest if reset_c_quest
+        @finished = false
+
         load_background()
         load_map()
         load_camera()
         load_text()
-
-        @finished = false
     end
 
     def update
-        if Omega::just_pressed(Gosu::KB_RETURN)
-            $quest += 1
-            $quest %= 4
-            $quest = 1 if $quest == 0
-            load()
+        if Omega::just_pressed(Gosu::KB_RIGHT)
+            @c_quest += 1
+            @c_quest %= ($quests_maps.size + 1)
+            @c_quest = 1 if @c_quest == 0
+            load(false)
+            return
+        elsif Omega::just_pressed(Gosu::KB_LEFT)
+            @c_quest -= 1
+            @c_quest %= 4
+            @c_quest = $quests_maps.size if @c_quest == 0
+            load(false)
             return
         elsif Omega::just_pressed(Gosu::KB_F1)
             @finished = true
@@ -72,7 +79,7 @@ class QuestState < Omega::State
 
         @ressources.each do |k, v|
             if v > 0
-                @text.text = "#{k}: #{$inventory[k]} / #{(@available) ? v : "???"}"
+                @text.text = "#{(@available) ? k : "???"}: #{(@available) ? $inventory[k] : "???"} / #{(@available) ? v : "???"}"
                 @text.x = x
                 @text.y = y
                 @text.color = Omega::Color::copy(Omega::Color::BLACK)
@@ -88,7 +95,7 @@ class QuestState < Omega::State
         end
 
         # Quest Status
-        status = $quest_status[$quest_status.keys()[$quest - 1]]["done"]
+        status = $quest_status[$quest_status.keys()[@c_quest - 1]]["done"]
         @text.text = "Quest status:\n#{(status) ? " " * 6 + "Done" : " " * 4 + "Undone"}"
         @text.y += 50
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
@@ -113,7 +120,7 @@ class QuestState < Omega::State
 
         # Title
         @text.scale = Omega::Vector2.new(1.5, 1.5)
-        @text.text = "Quest #{$quest}"
+        @text.text = "Quest #{@c_quest}"
         @text.x = (Omega.width - @text.width) / 2
         @text.y = 30
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
@@ -126,7 +133,7 @@ class QuestState < Omega::State
 
         # Quest name
         @text.scale = Omega::Vector2.new(1, 1)
-        @text.text = (@available) ? $quest_status.keys()[$quest - 1] + " (#{@isomap.width}x#{@isomap.height})" : "???"
+        @text.text = (@available) ? $quest_status.keys()[@c_quest - 1] + " (#{@isomap.width}x#{@isomap.height})" : "???"
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.x = (Omega.width - @text.width) / 2
         @text.y = Omega.height - @text.height - 50

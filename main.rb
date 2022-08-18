@@ -11,6 +11,7 @@ require_relative "resource"
 require_relative "textdamage"
 require_relative "brick"
 require_relative "hero"
+require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
@@ -62,7 +63,7 @@ class Game < Omega::RenderWindow
     ]
 
     def load_quests_map
-        for i in 1..3
+        for i in 1..$quests_maps.size
             $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
             $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_1.csv")
             $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_2.csv")
