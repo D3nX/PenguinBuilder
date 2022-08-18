@@ -52,8 +52,8 @@ class IsoMap
 
     Light = Struct.new(:x, :y, :z, :power)
     
-    attr_reader :tileset, :width, :height
-    attr_accessor :position, :rotation, :light, :margin
+    attr_reader :tileset, :width, :height, :blocks
+    attr_accessor :position, :rotation, :light, :margin, :color
 
     def initialize(tileset_path, width, height)
         @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT, :tileable => true)
@@ -64,6 +64,7 @@ class IsoMap
         @draw_debug_tile = false
         @margin = 0
         @position = Omega::Vector3.new(0, 0, 0)
+        @color = Omega::Color::copy(Omega::Color::WHITE)
 
         @blocks = Array.new(height) { Array.new(width) { [] } }
     end
@@ -190,7 +191,8 @@ class IsoMap
                     fy = y + @position.y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
                     if tile.id >= 0 and tile.id < @tileset.size
-                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale - i * @margin, 0, 1, 1, Gosu::Color.new(255, 255 - c, 255 - c, 255 - c))
+                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale - i * @margin, 0, 1, 1,
+                                                Gosu::Color.new(@color.alpha, @color.red - c, @color.green - c, @color.blue - c))
                         if @draw_debug_tile
                             tile.rect.z = 1000
                             tile.rect.color.alpha = 128
@@ -227,5 +229,76 @@ class IsoMap
         end
         return ressources
     end
+
+    def has_ressources?(other_map)
+        ressources = get_ressource_list()
+        other_res = other_map.get_ressource_list()
+
+        ressources.each do |k, v|
+            return false if v < other_res[k]
+        end
+        return true
+    end
+
+    # Construction checking
+
+    def has_construction?(other_map)
+        return false if other_map.width > @width
+        return false if other_map.height > @height
+
+        # Generating id for current map
+        blocks_ids = Array.new(@height) { Array.new(@width) { [] } }
+
+        for y in 0...@blocks.size
+            for x in 0...@blocks[y].size
+                for t in @blocks[y][x]
+                    blocks_ids[y][x] << t.id
+                end
+            end
+        end
+        
+        # Generating id for other map
+        other_blocks_ids = Array.new(other_map.height) { Array.new(other_map.width) { [] } }
+        
+        for y in 0...other_map.blocks.size
+            for x in 0...other_map.blocks[y].size
+                for t in other_map.blocks[y][x]
+                    other_blocks_ids[y][x] << t.id
+                end
+            end
+        end
+
+        # Check if some where it matches
+
+        for y in 0...blocks_ids.size
+            for x in 0...blocks_ids.size
+                if check_correspondance_at(x, y, blocks_ids, other_blocks_ids)
+                    return true
+                end
+            end
+        end
+
+        return false
+
+        # for y in 0...blocks_ids.size
+        #     for x in 0...blocks_ids[y].size
+
+        #     end
+        # end
+    end
+
+    private
+
+    def check_correspondance_at(x, y, blocks_ids, other_blocks_ids)
+        for oby in 0...other_blocks_ids.size
+            for obx in 0...other_blocks_ids[oby].size
+                if blocks_ids[y + oby][x + obx] != other_blocks_ids[oby][obx]
+                    return false
+                end
+            end
+        end
+        return true
+    end
+
 
 end

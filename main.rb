@@ -38,24 +38,40 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 7,
-        "Stone" => 2,
-        "Sand" => 6,
-        "Water" => 1,
-        "Wood" => 3,
-        "Glass" => 4
+        "Grass" => 1000,
+        "Stone" => 1000,
+        "Sand" => 1000,
+        "Water" => 1000,
+        "Wood" => 1000,
+        "Glass" => 1000,
+        "Dirt" => 1000
     }
 
-    $quest_name = [
-        "Fountain",
-        "House",
-        "Bigger House"
-    ]
+    $quest_status = {
+        "Fountain" => {"available" => true, "done" => false},
+        "House" => {"available" => false, "done" => false},
+        "Bigger House" => {"available" => false, "done" => false}
+    }
 
     $quest = 1
 
+    $quests_maps = [
+        IsoMap.new("assets/ctileset.png", 1, 1),
+        IsoMap.new("assets/ctileset.png", 1, 1),
+        IsoMap.new("assets/ctileset.png", 1, 1)
+    ]
+
+    def load_quests_map
+        for i in 1..3
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_1.csv")
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_2.csv")
+        end
+    end
+
     def load
-        Omega.set_state(QuestState.new)
+        load_quests_map()
+        Omega.set_state(ConstructionState.new)
     end
     
 end

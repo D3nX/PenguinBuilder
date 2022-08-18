@@ -46,13 +46,30 @@ class ConstructionState < Omega::State
         load_camera()
         load_cursor()
         load_ui()
+
+        @substate = nil
     end
 
     def update
+        if @substate
+            @substate.update
+            @substate = nil if @substate.finished
+            return
+        end
         @cursor.update
+
+        if Omega::just_pressed(Gosu::KB_F1)
+            @substate = QuestState.new
+            @substate.load
+        end
     end
 
     def draw
+        if @substate
+            @substate.draw
+            return
+        end
+
         @camera.draw do
             @isomap.draw
             @cursor.draw
@@ -81,7 +98,7 @@ class ConstructionState < Omega::State
 
     def draw_controls
         @text.scale = Omega::Vector2.new(0.15, 0.15)
-        @text.text = "Controls:\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
+        @text.text = "Controls:\nF1: Check quests\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)

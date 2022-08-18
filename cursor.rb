@@ -14,6 +14,17 @@ class Cursor < Omega::Sprite
         @offset = 0
     end
 
+    def check_ressources
+        if @isomap.has_ressources?($quests_maps[$quest - 1])
+            puts "has enough ressources"
+            if @isomap.has_construction?($quests_maps[$quest - 1])
+                puts "and it match!"
+            else
+                puts "but not match yet..."
+            end
+        end
+    end
+
     def update
         move(1, 0) if Omega::just_pressed(Gosu::KB_RIGHT)
         move(-1, 0) if Omega::just_pressed(Gosu::KB_LEFT)
@@ -105,6 +116,7 @@ class Cursor < Omega::Sprite
         @isomap.light = nil
         # @isomap.light.x = @position.x
         # @isomap.light.y = @position.y
+        check_ressources()
     end
 
     def draw
