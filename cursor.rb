@@ -15,12 +15,22 @@ class Cursor < Omega::Sprite
     end
 
     def check_ressources
-        if @isomap.has_ressources?($quests_maps[$quest - 1])
-            puts "has enough ressources"
-            if @isomap.has_construction?($quests_maps[$quest - 1])
-                puts "and it match!"
-            else
-                puts "but not match yet..."
+        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_C)
+            if @isomap.has_ressources?($quests_maps[$quest - 1])
+                puts "has enough ressources"
+                if @isomap.has_construction?($quests_maps[$quest - 1])
+                    puts "and it match!"
+                    name = $quest_status.keys()[$quest - 1]
+                    if not $quest_status[name]["done"]
+                        $quest_status[name]["done"] = true
+                        $quest += 1
+        
+                        name = $quest_status.keys()[$quest - 1]
+                        $quest_status[name]["available"] = true
+                    end
+                else
+                    puts "but not match yet..."
+                end
             end
         end
     end

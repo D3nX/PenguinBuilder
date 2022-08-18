@@ -126,7 +126,7 @@ class QuestState < Omega::State
 
         # Quest name
         @text.scale = Omega::Vector2.new(1, 1)
-        @text.text = (@available) ? $quest_status.keys()[$quest - 1] : "???"
+        @text.text = (@available) ? $quest_status.keys()[$quest - 1] + " (#{@isomap.width}x#{@isomap.height})" : "???"
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.x = (Omega.width - @text.width) / 2
         @text.y = Omega.height - @text.height - 50
