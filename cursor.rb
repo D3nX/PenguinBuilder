@@ -2,16 +2,46 @@ class Cursor < Omega::Sprite
 
     attr_reader :block_id
 
-    def initialize(isomap, camera)
+    def initialize(isomap, camera, notification)
         super("assets/cursor.png")
 
         @push = Gosu::Sample.new("assets/push.wav")
         @pop = Gosu::Sample.new("assets/pop.wav")
         @isomap = isomap
         @camera = camera
+        @notification = notification
         @block_id = 0
         @tile_position = Omega::Vector2.new(0, 0)
         @offset = 0
+    end
+
+    def check_ressources
+        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_C)
+            if @isomap.has_ressources?($quests_maps[$quest - 1])
+                puts "has enough ressources"
+                if @isomap.has_construction?($quests_maps[$quest - 1])
+                    puts "and it match!"
+                    name = $quest_status.keys()[$quest - 1]
+                    if not $quest_status[name]["done"]
+                        $quest_status[name]["done"] = true
+
+                        if $quest < $quests_maps.size
+                            $quest += 1
+            
+                            name = $quest_status.keys()[$quest - 1]
+                            $quest_status[name]["available"] = true
+                            @notification.launch(["Quest accomplished!", "Press F1 to check for the next quest!"])
+                        else
+                            @notification.launch(["Quest accomplished!",
+                                                    "Congratulation, you finished all the quests.",
+                                                    "Feel free to build anything from now on!"])
+                        end
+                    end
+                else
+                    puts "but not match yet..."
+                end
+            end
+        end
     end
 
     def update
@@ -105,6 +135,7 @@ class Cursor < Omega::Sprite
         @isomap.light = nil
         # @isomap.light.x = @position.x
         # @isomap.light.y = @position.y
+        check_ressources()
     end
 
     def draw
