@@ -4,6 +4,7 @@ require_relative "isomap"
 require_relative "cursor"
 require_relative "itemmenu"
 
+require_relative "queststate"
 require_relative "playstate"
 require_relative "explorationstate"
 require_relative "gameoverstate"
@@ -12,6 +13,9 @@ require_relative "looticon"
 require_relative "hero/brick"
 require_relative "hero/hero"
 require_relative "hero/lootinfo"
+require_relative "brick"
+require_relative "hero"
+require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
@@ -51,7 +55,8 @@ class Game < Omega::RenderWindow
         "Sand" => 1000,
         "Water" => 1000,
         "Wood" => 1000,
-        "Glass" => 1000
+        "Glass" => 1000,
+        "Dirt" => 1000
     }
 
     $hero_inventory = {
@@ -63,10 +68,33 @@ class Game < Omega::RenderWindow
         "Glass" => 0
     }
 
-    def load
-        Omega.set_state(GameOverState.new)
+    $quest_status = {
+        "Fountain" => {"available" => true, "done" => false},
+        "House" => {"available" => false, "done" => false},
+        "Bigger House" => {"available" => false, "done" => false}
+    }
+
+    $quest = 1
+
+    $quests_maps = [
+        IsoMap.new("assets/ctileset.png", 1, 1),
+        IsoMap.new("assets/ctileset.png", 1, 1),
+        IsoMap.new("assets/ctileset.png", 1, 1)
+    ]
+
+    def load_quests_map
+        for i in 1..$quests_maps.size
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_1.csv")
+            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_2.csv")
+        end
     end
-    
+
+    def load
+        load_quests_map()
+        Omega.set_state(ExplorationState.new)
+    end
+   
 end
 
 Omega.run(Game, "config.json")
