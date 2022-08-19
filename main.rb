@@ -55,16 +55,16 @@ class Game < Omega::RenderWindow
     }
 
     $hero_inventory = {
-        "Grass" => 0,
-        "Stone" => 0,
-        "Sand" =>  0,
+        "Grass" => 12,
+        "Stone" => 8,
+        "Sand" =>  1,
         "Water" => 0,
-        "Wood" =>  0,
+        "Wood" =>  1,
         "Glass" => 0
     }
 
     def load
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(GameOverState.new)
     end
     
 end
