@@ -7,16 +7,21 @@ require_relative "itemmenu"
 require_relative "queststate"
 require_relative "playstate"
 require_relative "explorationstate"
-require_relative "resource"
+require_relative "gameoverstate"
 require_relative "textdamage"
+require_relative "looticon"
+require_relative "hero/brick"
+require_relative "hero/hero"
+require_relative "hero/lootinfo"
 require_relative "brick"
 require_relative "hero"
 require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
+require_relative "monsters/breakablerock"
+require_relative "monsters/breakabletree"
 
-include Resource
 require_relative "constructionstate"
 
 Gosu::enable_undocumented_retrofication
@@ -25,6 +30,12 @@ class Game < Omega::RenderWindow
 
     $base_font = Gosu::Font.new(50)
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
+
+    $musics = {
+        "dark_cave" => Gosu::Song.new("assets/musics/dark_cave.ogg"),
+        "intro" =>  Gosu::Song.new("assets/musics/intro.ogg"),
+        "title_screen" => Gosu::Song.new("assets/musics/title_screen.ogg")
+    }
 
     $sounds = {
         "attack_pickaxe" => Gosu::Sample.new("assets/sounds/attack_pickaxe.wav"),
@@ -46,6 +57,15 @@ class Game < Omega::RenderWindow
         "Wood" => 1000,
         "Glass" => 1000,
         "Dirt" => 1000
+    }
+
+    $hero_inventory = {
+        "Grass" => 12,
+        "Stone" => 8,
+        "Sand" =>  1,
+        "Water" => 0,
+        "Wood" =>  1,
+        "Glass" => 0
     }
 
     $quest_status = {
@@ -74,7 +94,7 @@ class Game < Omega::RenderWindow
         load_quests_map()
         Omega.set_state(ExplorationState.new)
     end
-    
+   
 end
 
 Omega.run(Game, "config.json")

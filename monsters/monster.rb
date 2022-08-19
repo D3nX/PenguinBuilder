@@ -102,7 +102,7 @@ class Monster < Omega::SpriteSheet
                 end
             end
     
-            if (!@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox)) then
+            if (!@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox) && @damage > 0) then
                  @hero.receive_damage(@damage);
             end
     end
@@ -112,7 +112,7 @@ class Monster < Omega::SpriteSheet
 
         @hp -= damage;
 
-        @list_text_damage.push(TextDamage.new(damage,@position, 0.3));
+        @list_text_damage.push(TextDamage.new(damage,Omega::Vector3.new(@position.x - 4, @position.y, 0), 0.3));
 
         $sounds["hit_monster"].play() if (@hp > 0)
             

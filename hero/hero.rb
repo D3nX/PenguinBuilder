@@ -1,5 +1,6 @@
 class Hero < Omega::SpriteSheet
 
+    # Constants Player
     SPEED = 2;
     SPEED_PICKAXE = 15;
     PICKAXE_ANGLE_RANGE = 150;
@@ -9,22 +10,23 @@ class Hero < Omega::SpriteSheet
     ENERGY_COST = 4;
     MP_COST = 3;
 
+    # Constants Interfaces :
     HUD_WIDTH_HP = 220;
     HUD_WIDTH_MP = 180;
     HUD_WIDTH_ENERGY = 140;
     HUD_ENERGY_BLINK_FREQUENCY = 0.04
     HUD_THICKNESS = 4;
+    DEFAULT_BAG_SCALE = 2;
     
 
-    attr_reader :hitbox, :hitbox_pickaxe, :velocity, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
-    attr_accessor :bag_resources;
+    attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
+    attr_accessor :velocity;
 
     def initialize(cam)
         super("assets/hero.png",16,24);
         @origin = Omega::Vector2.new(0.5,0.5);
 
         load_statistics();
-        load_resources();
         load_hud_elements();
 
         load_animation();
@@ -45,6 +47,7 @@ class Hero < Omega::SpriteSheet
         @can_draw_hitbox = false;
 
         @list_bricks = [];
+        @list_loot_info = [];
     end
 
     def update()
@@ -74,24 +77,14 @@ class Hero < Omega::SpriteSheet
         @hitbox_pickaxe.draw if (@can_draw_hitbox)
     end
 
-    def load_resources()
-        @bag_resources = {
-            Resource::DIRT  => 0,
-            Resource::SAND  => 0,
-            Resource::WATER => 0,
-            Resource::ROCK  => 0,
-            Resource::WOOD  => 0
-        }
-    end
-
     def collect_resource(resource)
         case resource
-        when Resource::DIRT  
-        when Resource::WATER 
-        when Resource::ROCK  
-        when Resource::WOOD  
-            @bag_resources[resource] += 1;
-        when Resource::MANA 
+        when "Grass", "Stone", "Sand", "Water", "Wood", "Glass"
+            $hero_inventory[resource] += 1;
+            loot_info = LootInfo.new(resource, Omega::Vector3.new(12, Omega.height - 12, 0));
+            @list_loot_info.push(loot_info)
+            @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);
+        when "Mana"
             @mp += 5;
             @mp = @mp_max if (@mp >= @mp_max)
         end
@@ -161,6 +154,12 @@ class Hero < Omega::SpriteSheet
         @icon_pickaxe.position = Omega::Vector3.new(24, 88, 0);
         @icon_pickaxe_alpha = 255;
         @timer_energy_blink = 0;
+
+        @icon_bag = Omega::Sprite.new("assets/bag.png");
+        @icon_bag.origin = Omega::Vector2.new(0.5,0.5);
+        @icon_bag.scale = Omega::Vector2.new(2,2);
+        @icon_bag.position = Omega::Vector3.new(42, Omega.height - 42, 0);
+        @icon_bag.alpha = 255;
     end
 
     def update_velocity()
@@ -310,6 +309,26 @@ class Hero < Omega::SpriteSheet
         Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled - HUD_THICKNESS, @icon_pickaxe.y - size_y*0.5 - HUD_THICKNESS, HUD_WIDTH_ENERGY + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(@icon_pickaxe_alpha,255,255,255));
         Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled, @icon_pickaxe.y - size_y*0.5,(@energy * HUD_WIDTH_ENERGY)/@energy_max,size_y, Gosu::Color.new(@icon_pickaxe_alpha, 255, 127, 39));
 
+        # Bag
+        @icon_bag.draw();
+
+        if (@icon_bag.scale.x >= DEFAULT_BAG_SCALE) then
+            @icon_bag.scale.x = @icon_bag.scale.y -= 0.4;
+
+            if (@icon_bag.scale.x <= DEFAULT_BAG_SCALE) then
+                @icon_bag.scale.x = @icon_bag.scale.y = DEFAULT_BAG_SCALE;
+            end
+        end
+
+        for i in 0...@list_loot_info.length do
+            next if @list_loot_info[i] == nil
+
+            @list_loot_info[i].draw() 
+            
+            if (@list_loot_info[i].alpha <= 0) then
+                @list_loot_info.delete_at(i);
+            end
+        end
     end
 
 end
