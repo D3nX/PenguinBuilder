@@ -20,14 +20,13 @@ class Hero < Omega::SpriteSheet
     
 
     attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
-    attr_accessor :velocity, :bag_resources;
+    attr_accessor :velocity;
 
     def initialize(cam)
         super("assets/hero.png",16,24);
         @origin = Omega::Vector2.new(0.5,0.5);
 
         load_statistics();
-        load_resources();
         load_hud_elements();
 
         load_animation();
@@ -78,21 +77,10 @@ class Hero < Omega::SpriteSheet
         @hitbox_pickaxe.draw if (@can_draw_hitbox)
     end
 
-    def load_resources()
-        @bag_resources = {
-            "Grass"  => 0,
-            "Stone"  => 0,
-            "Sand"   => 0,
-            "Water"  => 0,
-            "Wood"   => 0,
-            "Glass"  => 0
-        }
-    end
-
     def collect_resource(resource)
         case resource
         when "Grass", "Stone", "Sand", "Water", "Wood", "Glass"
-            @bag_resources[resource] += 1;
+            $hero_inventory[resource] += 1;
             loot_info = LootInfo.new(resource, Omega::Vector3.new(12, Omega.height - 12, 0));
             @list_loot_info.push(loot_info)
             @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);

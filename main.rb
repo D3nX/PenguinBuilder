@@ -6,7 +6,9 @@ require_relative "itemmenu"
 
 require_relative "playstate"
 require_relative "explorationstate"
+require_relative "gameoverstate"
 require_relative "textdamage"
+require_relative "looticon"
 require_relative "hero/brick"
 require_relative "hero/hero"
 require_relative "hero/lootinfo"
@@ -50,6 +52,15 @@ class Game < Omega::RenderWindow
         "Water" => 1000,
         "Wood" => 1000,
         "Glass" => 1000
+    }
+
+    $hero_inventory = {
+        "Grass" => 0,
+        "Stone" => 0,
+        "Sand" =>  0,
+        "Water" => 0,
+        "Wood" =>  0,
+        "Glass" => 0
     }
 
     def load

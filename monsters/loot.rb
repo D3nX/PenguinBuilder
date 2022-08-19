@@ -1,4 +1,4 @@
-class Loot < Omega::SpriteSheet
+class Loot < LootIcon
 
     SPEED = 4;
 
@@ -12,10 +12,8 @@ class Loot < Omega::SpriteSheet
     attr_accessor :velocity
 
     def initialize(hero, resource)
-        super("assets/loot.png",16,24);
+        super(resource)
         @resource = resource;
-        load_animation();
-        play_animation("IDLE");
 
         @origin = Omega::Vector2.new(0.5,0.5);
         @hero = hero;
@@ -30,27 +28,8 @@ class Loot < Omega::SpriteSheet
         @timer_before_going_toward_hero = TIMER_BEFORE_GOING_TOWARD_HERO;
     end
 
-    def load_animation()
-        case @resource
-        when "Grass"  
-            add_animation("IDLE", [0])
-        when "Stone"  
-            add_animation("IDLE", [1])
-        when "Sand"
-            add_animation("IDLE", [2])
-        when "Water" 
-            add_animation("IDLE", [3])
-        when "Wood"  
-            add_animation("IDLE", [4])
-        when "Glass"
-            add_animation("IDLE", [5])
-        when "Mana" 
-             add_animation("IDLE", [6])
-        end
-    end
-
     def update()
-        update_velocity();
+        super();
         update_scale();
         update_hitbox();
 
@@ -83,11 +62,6 @@ class Loot < Omega::SpriteSheet
 
     def draw()
         super() if (!@is_collected)
-    end
-
-    def update_velocity()
-        @position.x += @velocity.x;
-        @position.y += @velocity.y;
     end
 
     def update_hitbox()
