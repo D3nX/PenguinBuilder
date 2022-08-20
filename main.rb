@@ -8,6 +8,7 @@ require_relative "queststate"
 require_relative "playstate"
 require_relative "explorationstate"
 require_relative "gameoverstate"
+require_relative "backtovillagestate"
 require_relative "textdamage"
 require_relative "looticon"
 require_relative "hero/brick"
@@ -95,7 +96,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(BackToVillageState.new)
     end
    
 end

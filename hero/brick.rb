@@ -12,6 +12,7 @@ class Brick < Omega::Sprite
         @position = @hero.position.clone;
         @velocity = Omega::Vector2.new(0,0);
         @origin = Omega::Vector2.new(0.5,0.5);
+        @scale = Omega::Vector2.new(0.5,0.5)
 
         $sounds["throw_brick"].play();
         @hitbox = Omega::Rectangle.new(0,0,1,1);
