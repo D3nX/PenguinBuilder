@@ -39,6 +39,7 @@ class Monster < Omega::SpriteSheet
         update_velocity();
         update_damage_animation() if (!@can_take_damage)
         update_hitbox();
+        update_z_order();
 
         check_damage() if (!@is_dead)
 
@@ -164,6 +165,10 @@ class Monster < Omega::SpriteSheet
         if (@blink_nb >= 20) then
             @death_animation_is_finished = true;
         end
+    end
+
+    def update_z_order()
+        @position.z = 100 + @position.y
     end
 
     def draw_text_damage()
