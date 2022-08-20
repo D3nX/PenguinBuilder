@@ -36,8 +36,10 @@ class LootIcon < Omega::SpriteSheet
             add_animation("IDLE", [4])
         when "Glass"
             add_animation("IDLE", [5])
-        when "Mana" 
+        when "Dirt"
             add_animation("IDLE", [6])
+        when "Mana" 
+            add_animation("IDLE", [9])
         end
     end
 

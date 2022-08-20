@@ -81,7 +81,7 @@ class Hero < Omega::SpriteSheet
         case resource
         when "Grass", "Stone", "Sand", "Water", "Wood", "Glass"
             $hero_inventory[resource] += 1;
-            loot_info = LootInfo.new(resource, Omega::Vector3.new(12, Omega.height - 12, 0));
+            loot_info = LootInfo.new(resource, Omega::Vector3.new(18, Omega.height - 12, 0));
             @list_loot_info.push(loot_info)
             @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);
         when "Mana"
