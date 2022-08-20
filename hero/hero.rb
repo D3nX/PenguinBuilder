@@ -17,8 +17,7 @@ class Hero < Omega::SpriteSheet
     HUD_ENERGY_BLINK_FREQUENCY = 0.04
     HUD_THICKNESS = 4;
     DEFAULT_BAG_SCALE = 2;
-
-    UI_Z = 100_000
+    UI_Z = 100_000;
     
 
     attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources

@@ -4,6 +4,7 @@ class LootInfo < LootIcon
     SPEED_ALPHA = 6;
     THICKNESS = 4;
     TRAVEL_DISTANCE = 120;
+    UI_Z = 100_000;
 
     attr_reader :alpha
 
@@ -20,7 +21,7 @@ class LootInfo < LootIcon
         @initial_position = pos.clone;
 
         @text = Omega::Text.new("+1", $font);
-        @text.position = Omega::Vector3.new(@position.x + @width + 4, @position.y + @height*0.5, 0);
+        @text.position = Omega::Vector3.new(@position.x + @width + 4, @position.y + @height*0.5, UI_Z);
         @text.scale = Omega::Vector2.new(0.5,0.5);
     end
 
