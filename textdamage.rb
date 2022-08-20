@@ -7,7 +7,7 @@ class TextDamage < Omega::Text
     def initialize(damage, position, scale)
         super(damage.to_i.to_s, $font);
 
-        @initial_position = Omega::Vector3.new(position.x, position.y + 5, 0);
+        @initial_position = Omega::Vector3.new(position.x, position.y + 5, position.z);
         @position = @initial_position.clone;
         @velocity = Omega::Vector2.new(0,-FORCE_JUMP);
         @scale = Omega::Vector2.new(scale,scale);
