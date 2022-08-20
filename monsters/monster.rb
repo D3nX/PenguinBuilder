@@ -4,6 +4,8 @@ class Monster < Omega::SpriteSheet
 
     TIMER_BLINK = 0.5
 
+    UI_Z = 100_000
+
     def initialize(hero, camera, path, width, height, hp, damage)
         super(path,width,height)
         @hero = hero;
@@ -116,7 +118,7 @@ class Monster < Omega::SpriteSheet
 
         @hp -= damage;
 
-        @list_text_damage.push(TextDamage.new(damage,Omega::Vector3.new(@position.x - 4, @position.y, 0), 0.3));
+        @list_text_damage.push(TextDamage.new(damage,Omega::Vector3.new(@position.x - 4, @position.y, UI_Z), 0.3));
 
         $sounds["hit_monster"].play() if (@hp > 0)
             
