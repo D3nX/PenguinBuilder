@@ -17,6 +17,8 @@ class Hero < Omega::SpriteSheet
     HUD_ENERGY_BLINK_FREQUENCY = 0.04
     HUD_THICKNESS = 4;
     DEFAULT_BAG_SCALE = 2;
+
+    UI_Z = 100_000
     
 
     attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
@@ -57,6 +59,7 @@ class Hero < Omega::SpriteSheet
         update_damage() if (!@can_take_damage)
         update_pickaxe() if (@is_attacking)
         update_energy();
+        update_z_order();
 
         for i in 0...list_bricks.length do
             list_bricks[i].update();
@@ -66,15 +69,21 @@ class Hero < Omega::SpriteSheet
 
     def draw()
         super();
+        @pickaxe.z = UI_Z
         @pickaxe.draw() if @is_attacking
 
         for i in 0...list_bricks.length do
+            list_bricks[i].z = UI_Z
             list_bricks[i].draw();
         end
 
         # DEBUG
-        @hitbox.draw if (@can_draw_hitbox)
-        @hitbox_pickaxe.draw if (@can_draw_hitbox)
+        if (@can_draw_hitbox)
+            @hitbox.z = UI_Z
+            @hitbox_pickaxe.z = UI_Z
+            @hitbox.draw
+            @hitbox_pickaxe.draw
+        end
     end
 
     def collect_resource(resource)
@@ -288,28 +297,37 @@ class Hero < Omega::SpriteSheet
         end
     end
 
+    def update_z_order()
+        @position.z = 100 + @position.y
+    end
+
     def draw_hud()
         size_y = 12;
 
         # HP
+        @icon_heart.z = UI_Z
         @icon_heart.draw();
-        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled - HUD_THICKNESS, @icon_heart.y - HUD_THICKNESS - size_y*0.5, HUD_WIDTH_HP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255))
-        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled, @icon_heart.y - size_y*0.5,(@hp * HUD_WIDTH_HP)/@hp_max,size_y,Gosu::Color.new(255, 10, 200, 8));
+        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled - HUD_THICKNESS, @icon_heart.y - HUD_THICKNESS - size_y*0.5, HUD_WIDTH_HP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255), UI_Z)
+        Gosu.draw_rect(@icon_heart.x + @icon_heart.width_scaled, @icon_heart.y - size_y*0.5,(@hp * HUD_WIDTH_HP)/@hp_max,size_y,Gosu::Color.new(255, 10, 200, 8), UI_Z);
 
         # MP
+        @icon_brick.z = UI_Z
         @icon_brick.draw();
 
         alpha_mp = (@mp < MP_COST) ? 60 : 255
 
-        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled - HUD_THICKNESS, @icon_brick.y-HUD_THICKNESS - size_y*0.5, HUD_WIDTH_MP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(alpha_mp,255,255,255))
-        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled, @icon_brick.y - size_y*0.5,(@mp * HUD_WIDTH_MP)/@mp_max,size_y,Gosu::Color.new(alpha_mp, 10, 8, 200));
+        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled - HUD_THICKNESS, @icon_brick.y-HUD_THICKNESS - size_y*0.5, HUD_WIDTH_MP + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(alpha_mp,255,255,255), UI_Z)
+        Gosu.draw_rect(@icon_brick.x + @icon_brick.width_scaled, @icon_brick.y - size_y*0.5,(@mp * HUD_WIDTH_MP)/@mp_max,size_y,Gosu::Color.new(alpha_mp, 10, 8, 200), UI_Z);
 
         # Energy
+        @icon_pickaxe.z = UI_Z
         @icon_pickaxe.draw();
-        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled - HUD_THICKNESS, @icon_pickaxe.y - size_y*0.5 - HUD_THICKNESS, HUD_WIDTH_ENERGY + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(@icon_pickaxe_alpha,255,255,255));
-        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled, @icon_pickaxe.y - size_y*0.5,(@energy * HUD_WIDTH_ENERGY)/@energy_max,size_y, Gosu::Color.new(@icon_pickaxe_alpha, 255, 127, 39));
+
+        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled - HUD_THICKNESS, @icon_pickaxe.y - size_y*0.5 - HUD_THICKNESS, HUD_WIDTH_ENERGY + (2*HUD_THICKNESS), size_y + (2*HUD_THICKNESS), Gosu::Color.new(@icon_pickaxe_alpha,255,255,255), UI_Z);
+        Gosu.draw_rect(@icon_pickaxe.x + @icon_pickaxe.width_scaled, @icon_pickaxe.y - size_y*0.5,(@energy * HUD_WIDTH_ENERGY)/@energy_max,size_y, Gosu::Color.new(@icon_pickaxe_alpha, 255, 127, 39), UI_Z);
 
         # Bag
+        @icon_bag.z = UI_Z
         @icon_bag.draw();
 
         if (@icon_bag.scale.x >= DEFAULT_BAG_SCALE) then
@@ -323,6 +341,7 @@ class Hero < Omega::SpriteSheet
         for i in 0...@list_loot_info.length do
             next if @list_loot_info[i] == nil
 
+            @list_loot_info[i].z = UI_Z
             @list_loot_info[i].draw() 
             
             if (@list_loot_info[i].alpha <= 0) then
