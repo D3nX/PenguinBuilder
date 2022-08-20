@@ -27,6 +27,11 @@ class ExplorationState < Omega::State
     def update()
        @hero.update();
 
+       if (@hero.hp <= 0) then
+        Omega.set_state(GameOverState.new)
+       end
+
+
        @rockdood.update();
 
        @breakable_rock.update();

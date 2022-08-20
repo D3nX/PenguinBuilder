@@ -30,9 +30,11 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $musics = {
+        "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
         "dark_cave" => Gosu::Song.new("assets/musics/dark_cave.ogg"),
         "intro" =>  Gosu::Song.new("assets/musics/intro.ogg"),
-        "title_screen" => Gosu::Song.new("assets/musics/title_screen.ogg")
+        "title_screen" => Gosu::Song.new("assets/musics/title_screen.ogg"),
+        "victory" => Gosu::Song.new("assets/musics/victory.ogg")
     }
 
     $sounds = {
@@ -63,7 +65,8 @@ class Game < Omega::RenderWindow
         "Sand" =>  1,
         "Water" => 0,
         "Wood" =>  1,
-        "Glass" => 0
+        "Glass" => 0,
+        "Dirt"  => 0
     }
 
     $quest_status = {

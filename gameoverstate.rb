@@ -82,7 +82,7 @@ class GameOverState < Omega::State
             list_of_elements.push(k)
         end
 
-        random_value = rand(0...list_of_elements.length);
+        random_value = rand(0...list_of_elements.length-1); # We don't want to draw MANA
         return list_of_elements[random_value];
     end
 
@@ -134,11 +134,17 @@ class GameOverState < Omega::State
     def update_alpha_fade()
         if (@alpha_fade < 255) then
             @alpha_fade += FADE_SPEED;
-
             if (@alpha_fade >= 255) then
                 @alpha_fade = 255;
+                transfer_to_main_inventory();
                 Omega.set_state(ConstructionState.new)
             end
+        end
+    end
+
+    def transfer_to_main_inventory()
+        $inventory.keys().each do |k|
+            $inventory[k] += $hero_inventory[k];
         end
     end
 

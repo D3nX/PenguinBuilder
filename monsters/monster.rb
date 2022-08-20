@@ -47,7 +47,10 @@ class Monster < Omega::SpriteSheet
         update_death() if (@is_dead && !@death_animation_is_finished)
 
         for i in 0...@list_items.length do
-            @list_items[i].update();
+            next if (@list_items[i] == nil) 
+
+            @list_items[i].update() 
+            @list_items.delete_at(i) if (@list_items[i].is_collected)
         end
 
     end
@@ -123,7 +126,6 @@ class Monster < Omega::SpriteSheet
         if (@hp <= 0) then
             if (!@is_dead) then
                 $sounds["monster_die"].play();
-                # spawn loot here
                 spawn_loot();
                 @is_dead = true 
             end
@@ -134,7 +136,10 @@ class Monster < Omega::SpriteSheet
 
     def update_text_damage()
         for i in 0...@list_text_damage.length
+            next if (@list_text_damage[i] == nil)
+
             @list_text_damage[i].update();
+            @list_text_damage.delete_at(i) if (@list_text_damage[i].alpha <= 0)
         end
     end
 
