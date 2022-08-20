@@ -30,8 +30,10 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $musics = {
+        "chaos_penguin_castle_ruins" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
         "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
-        "dark_cave" => Gosu::Song.new("assets/musics/dark_cave.ogg"),
+        "desert" => Gosu::Song.new("assets/musics/desert.ogg"),
+        "forest" => Gosu::Song.new("assets/musics/forest.ogg"),
         "intro" =>  Gosu::Song.new("assets/musics/intro.ogg"),
         "title_screen" => Gosu::Song.new("assets/musics/title_screen.ogg"),
         "victory" => Gosu::Song.new("assets/musics/victory.ogg")
