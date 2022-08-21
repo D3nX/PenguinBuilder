@@ -5,34 +5,22 @@ class ExplorationState < Omega::State
         @camera.scale = Omega::Vector2.new(3,3)
         
         @hero = Hero.new(@camera);
-        @hero.position = Omega::Vector3.new(22 * 16, 16 * 16, 0);
+        @hero.position = Omega::Vector3.new(0,0,0);
         @camera.follow(@hero, 0.4)
 
         @text = Omega::Text.new("", $font)
 
-        @rockdood = Rockdood.new(@hero, @camera);
-        @rockdood.position = Omega::Vector3.new(22*16,5*16,0);
-
-        @breakable_rock = BreakableRock.new(@hero, @camera)
-        @breakable_rock.position = Omega::Vector3.new(18*16,12*16,0);
-
-        @breakable_tree = BreakableTree.new(@hero, @camera)
-        @breakable_tree.position = Omega::Vector3.new(10*16,11*16,0);
-
-        @breakable_cactus = BreakableCactus.new(@hero, @camera)
-        @breakable_cactus.position = Omega::Vector3.new(12*16,13*16,0);
-
-        @breakable_bush = BreakableBush.new(@hero, @camera)
-        @breakable_bush.position = Omega::Vector3.new(7*16,13*16,0);
-
-        @smokey = Smokey.new(@hero, @camera);
-        @smokey.position = Omega::Vector3.new(12*16,10*16,0);
+        $musics[$current_map].play(true)
 
         @map = IsoMap.new("assets/ctileset.png",48,20);
-        @map.load_csv_layer("assets/maps/map_plains_layer_0.csv");
-        @map.load_csv_layer("assets/maps/map_plains_layer_1.csv");
-        @map.load_csv_layer("assets/maps/map_plains_layer_2.csv");
-        @map.light = nil
+        @map.load_csv_layer("assets/maps/" + $current_map + "_layer_0.csv");
+        @map.load_csv_layer("assets/maps/" + $current_map +"_layer_1.csv");
+        @map.load_csv_layer("assets/maps/" + $current_map +"_layer_2.csv");
+        @map.light = nil;
+
+        @list_monsters = [];
+
+        load_entities()
 
         @substate = nil
     end
@@ -52,16 +40,12 @@ class ExplorationState < Omega::State
 
        @hero.update();
 
+       for i in 0...@list_monsters.length do
+            @list_monsters[i].update();
+       end
+
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
        Omega.set_state(BackToVillageState.new) if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0)
-
-       @rockdood.update();
-       @smokey.update();
-
-       @breakable_rock.update();
-       @breakable_tree.update();
-       @breakable_cactus.update();
-       @breakable_bush.update();
 
        update_collision_with_map();
     end
@@ -77,17 +61,58 @@ class ExplorationState < Omega::State
 
             @hero.draw();
 
-            @rockdood.draw();
-            @smokey.draw();
-
-            @breakable_rock.draw();
-            @breakable_tree.draw();
-            @breakable_cactus.draw();
-            @breakable_bush.draw();
+            for i in 0...@list_monsters.length do
+                @list_monsters[i].draw();
+           end
         end
 
+        # Interfaces :
         @hero.draw_hud();
         draw_controls()
+    end
+
+
+    def load_entities()
+        map_entities = Omega::Map.new("assets/edit_tileset.png", 16)
+        map_entities.load_layer("entities", "assets/maps/" + $current_map.to_s + "_entities.csv")
+        map_entities.set_type(10, "hero")
+        map_entities.set_type(11, "rockdood")
+        map_entities.set_type(12, "smokey")
+        map_entities.set_type(13, "bush")
+        map_entities.set_type(14, "cactus")
+        map_entities.set_type(15, "tree")
+        map_entities.set_type(16, "rock")
+
+        map_entities.layers["entities"].each do |t|
+            if t.type == "hero"
+                @hero.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @camera.follow(@hero, 0.4)
+            elsif t.type == "rockdood"
+                rockdood = Rockdood.new(@hero, @camera)
+                rockdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(rockdood)
+            elsif t.type == "smokey"
+                smokey = Smokey.new(@hero, @camera)
+                smokey.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(smokey)
+            elsif t.type == "bush"
+                bush = BreakableBush.new(@hero, @camera)
+                bush.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(bush)
+            elsif t.type == "cactus"
+                cactus = BreakableCactus.new(@hero, @camera)
+                cactus.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(cactus)
+            elsif t.type == "tree"
+                tree = BreakableTree.new(@hero, @camera)
+                tree.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(tree)
+            elsif t.type == "rock"
+                rock = BreakableRock.new(@hero, @camera)
+                rock.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(rock)
+            end
+        end
     end
 
     def update_collision_with_map()

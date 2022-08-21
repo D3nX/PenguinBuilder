@@ -6,7 +6,7 @@ class Smokey < Monster
 
     def initialize(hero, camera)
         super(hero, camera, "assets/smokey.png", 30, 30, 51, 9)
-        set_loot(8,["Water", "Dirt", "Mana"], 75)
+        set_loot(6,["Water", "Dirt", "Mana"], 75)
 
         # Every monsters have to possess a HIT and DIE animation
         add_animation("IDLE", [0]);

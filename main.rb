@@ -36,7 +36,7 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $musics = {
-        "chaos_penguin_castle_ruins" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
+        "castle" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
         "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
         "desert" => Gosu::Song.new("assets/musics/desert.ogg"),
         "forest" => Gosu::Song.new("assets/musics/forest.ogg"),
@@ -58,28 +58,30 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 1000,
-        "Stone" => 1000,
-        "Sand" => 1000,
-        "Water" => 1000,
-        "Wood" => 1000,
-        "Glass" => 1000,
-        "Dirt" => 1000,
-        "Cactus" => 1000,
-        "Bush" => 1000
+        "Grass" => 5,
+        "Stone" => 3,
+        "Sand" => 0,
+        "Water" => 0,
+        "Wood" => 2,
+        "Glass" => 0,
+        "Dirt" => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $hero_inventory = {
-        "Grass" => 12,
-        "Stone" => 8,
-        "Sand" =>  1,
+        "Grass" => 0,
+        "Stone" => 0,
+        "Sand" =>  0,
         "Water" => 0,
-        "Wood" =>  1,
+        "Wood" =>  0,
         "Glass" => 0,
         "Dirt"  => 0,
         "Cactus" => 0,
         "Bush" => 0
     }
+
+    $current_map = "forest" # possible choices are: "forest" || "desert" || "castle"
 
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
@@ -95,6 +97,8 @@ class Game < Omega::RenderWindow
         IsoMap.new("assets/ctileset.png", 1, 1)
     ]
 
+    $construction_state = nil
+
     def load_quests_map
         for i in 1..$quests_maps.size
             $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
@@ -105,7 +109,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end
