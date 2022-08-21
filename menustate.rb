@@ -14,7 +14,7 @@ class MenuState < Omega::State
         if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
             if not Omega.is_transition?
                 transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
-                    Omega.set_state(ExplorationState.new)
+                    Omega.set_state(ConstructionState.new)
                 end
                 Omega.launch_transition(transition)
                 return
