@@ -179,4 +179,8 @@ class Cursor < Omega::Sprite
         end
     end
 
+    def get_item_name
+        return IsoMap::BlockNames[@block_id]
+    end
+
 end
