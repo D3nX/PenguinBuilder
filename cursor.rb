@@ -32,7 +32,7 @@ class Cursor < Omega::Sprite
             
                             name = $quest_status.keys()[$quest - 1]
                             $quest_status[name]["available"] = true
-                            @notification.launch(["Quest accomplished!", "Press F1 to check for the next quest!"])
+                            @notification.launch(["Quest accomplished!", "Press ESCAPE to check for the next quest!"])
                         else
                             @notification.launch(["Quest accomplished!",
                                                     "Congratulation, you finished all the quests.",
@@ -129,8 +129,8 @@ class Cursor < Omega::Sprite
             end
         end
 
-        if Omega::just_pressed(Gosu::KB_TAB)
-            @block_id += 1
+        if Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_W)
+            @block_id += (Omega::just_pressed(Gosu::KB_W)) ? 1 : -1
             @block_id %= IsoMap::BlockNames.size
         end
 
