@@ -21,6 +21,7 @@ require_relative "monsters/rockdood"
 require_relative "monsters/smokey"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
+require_relative "monsters/breakablecactus"
 
 require_relative "constructionstate"
 

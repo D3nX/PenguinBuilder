@@ -17,6 +17,9 @@ class ExplorationState < Omega::State
         @breakable_tree = BreakableTree.new(@hero, @camera)
         @breakable_tree.position = Omega::Vector3.new(10*16,11*16,0);
 
+        @breakable_cactus = BreakableCactus.new(@hero, @camera)
+        @breakable_cactus.position = Omega::Vector3.new(12*16,13*16,0);
+
         @smokey = Smokey.new(@hero, @camera);
         @smokey.position = Omega::Vector3.new(12*16,10*16,0);
 
@@ -38,6 +41,7 @@ class ExplorationState < Omega::State
 
        @breakable_rock.update();
        @breakable_tree.update();
+       @breakable_cactus.update();
 
        update_collision_with_map();
     end
@@ -53,6 +57,7 @@ class ExplorationState < Omega::State
 
             @breakable_rock.draw()
             @breakable_tree.draw();
+            @breakable_cactus.draw()
         end
 
         @hero.draw_hud();
