@@ -59,8 +59,8 @@ class Hero < Omega::SpriteSheet
         if (@can_take_damage) then
             update_inputs();
         else
-            @velocity = Omega::Vector2.new(-@capture_velocity.x, -@capture_velocity.y)
-            @velocity.y = SPEED if (@capture_velocity.x == 0 && @capture_velocity.y == 0)
+            @velocity = Omega::Vector2.new(-@capture_velocity.x * 1.5, -@capture_velocity.y * 1.5)
+            @velocity.y = SPEED*1.5 if (@capture_velocity.x == 0 && @capture_velocity.y == 0)
             play_animation("hit")
             update_damage() 
         end

@@ -142,16 +142,16 @@ class BackToVillageState < Omega::State
         if (@timer_add_loot < 0) then
             current_resource = @list_keys[@current_key_index]
 
-            spawn_icon(current_resource);
-            remove_from_hero_inventory(current_resource, 1);
-
             if ($hero_inventory[current_resource] <= 0) then
                 @current_key_index += 1;
 
                 if (@current_key_index >= @list_keys.length) then
-                    @current_key_index = @list_keys.length - 1
+                    @current_key_index = @list_keys.length
                     @can_fade = true; 
                 end
+            else
+                spawn_icon(current_resource);
+                remove_from_hero_inventory(current_resource, 1);
             end
 
             @timer_add_loot = TIMER_ADD_LOOT;
