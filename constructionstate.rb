@@ -44,12 +44,15 @@ class ConstructionState < Omega::State
     end
 
     def load
-        load_map()
-        load_camera()
-        load_cursor()
-        load_ui()
+        if not defined? @@initialized
+            load_map()
+            load_camera()
+            load_cursor()
+            load_ui()
 
-        @substate = nil
+            @substate = nil
+            @@initialized = true
+        end
     end
 
     def update
@@ -58,6 +61,19 @@ class ConstructionState < Omega::State
             @substate = nil if @substate.finished
             return
         end
+
+        if Omega::just_pressed(Gosu::KB_P) and not Omega.is_transition?
+            $construction_state = self
+            transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
+                Omega.set_state(WorldMapState.new)
+            end
+            transition.z = 100_000
+            Omega.launch_transition(transition)
+            return
+        end
+
+        return if Omega.is_transition?
+
         @cursor.update
 
         if Omega::just_pressed(Gosu::KB_ESCAPE)
@@ -117,7 +133,7 @@ class ConstructionState < Omega::State
 
     def draw_controls
         @text.scale = Omega::Vector2.new(0.15, 0.15)
-        @text.text = "Controls:\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate\nESC: Check quests"
+        @text.text = "Controls:\nQ / W: Next / previous item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate\nESC: Check quests\nP: Go to world map"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
