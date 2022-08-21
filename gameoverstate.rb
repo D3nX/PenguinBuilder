@@ -57,7 +57,7 @@ class GameOverState < Omega::State
 
     def load_hero()
         @hero = Omega::SpriteSheet.new("assets/hero.png", 16, 24);
-        @hero.add_animation("DIE", [0]);
+        @hero.add_animation("DIE", [16]);
         @hero.play_animation("DIE");
         @hero.scale.x = @hero.scale.y = HERO_BASE_SCALE;
         @hero.origin.x = @hero.origin.y = 0.5;

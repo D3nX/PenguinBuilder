@@ -21,6 +21,7 @@ class BackToVillageState < Omega::State
         
         @alpha_fade = 0;
         @alpha_flash = 255;
+        @quantity_item = 0;
 
         transfer_to_main_inventory();
     end
@@ -94,7 +95,8 @@ class BackToVillageState < Omega::State
         $sounds["validate"].play();
 
         @list_icons.push(icon)
-        @text.text = "Resources obtained: " + @list_icons.length.to_s
+        @quantity_item += 1;
+        @text.text = "Resources obtained: " + @quantity_item.to_s;
     end
 
     def remove_from_hero_inventory(resource, quantity)
@@ -140,16 +142,16 @@ class BackToVillageState < Omega::State
         if (@timer_add_loot < 0) then
             current_resource = @list_keys[@current_key_index]
 
-            spawn_icon(current_resource);
-            remove_from_hero_inventory(current_resource, 1);
-
             if ($hero_inventory[current_resource] <= 0) then
                 @current_key_index += 1;
 
                 if (@current_key_index >= @list_keys.length) then
-                    @current_key_index = @list_keys.length - 1
+                    @current_key_index = @list_keys.length
                     @can_fade = true; 
                 end
+            else
+                spawn_icon(current_resource);
+                remove_from_hero_inventory(current_resource, 1);
             end
 
             @timer_add_loot = TIMER_ADD_LOOT;

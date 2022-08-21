@@ -4,7 +4,7 @@ class Rockdood < Monster
     DISTANCE_DETECTION = 90
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/rockdood.png", 30, 40, 78, 16)
+        super(hero, camera, "assets/rockdood.png", 30, 40, 78, 12)
         set_loot(12,["Grass", "Stone", "Mana"], 75)
 
         # Every monsters have to possess a HIT and DIE animation

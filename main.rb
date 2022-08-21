@@ -22,6 +22,8 @@ require_relative "monsters/rockdood"
 require_relative "monsters/smokey"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
+require_relative "monsters/breakablecactus"
+require_relative "monsters/breakablebush"
 
 require_relative "constructionstate"
 
@@ -73,7 +75,9 @@ class Game < Omega::RenderWindow
         "Water" => 0,
         "Wood" =>  1,
         "Glass" => 0,
-        "Dirt"  => 0
+        "Dirt"  => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $quest_status = {

@@ -1,8 +1,8 @@
-class BreakableRock < Monster
+class BreakableCactus < Monster
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/rock.png", 40, 40, 54, 0)
-        set_loot(15,["Stone"], 90)
+        super(hero, camera, "assets/cactus.png", 24, 48, 40, 5)
+        set_loot(15,["Water", "Cactus"], 90)
 
         # Every monsters have to possess a HIT and DIE animation
         add_animation("IDLE", [0]);

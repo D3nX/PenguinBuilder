@@ -8,6 +8,8 @@ class ExplorationState < Omega::State
         @hero.position = Omega::Vector3.new(22 * 16, 16 * 16, 0);
         @camera.follow(@hero, 0.4)
 
+        @text = Omega::Text.new("", $font)
+
         @rockdood = Rockdood.new(@hero, @camera);
         @rockdood.position = Omega::Vector3.new(22*16,5*16,0);
 
@@ -16,6 +18,12 @@ class ExplorationState < Omega::State
 
         @breakable_tree = BreakableTree.new(@hero, @camera)
         @breakable_tree.position = Omega::Vector3.new(10*16,11*16,0);
+
+        @breakable_cactus = BreakableCactus.new(@hero, @camera)
+        @breakable_cactus.position = Omega::Vector3.new(12*16,13*16,0);
+
+        @breakable_bush = BreakableBush.new(@hero, @camera)
+        @breakable_bush.position = Omega::Vector3.new(7*16,13*16,0);
 
         @smokey = Smokey.new(@hero, @camera);
         @smokey.position = Omega::Vector3.new(12*16,10*16,0);
@@ -38,6 +46,8 @@ class ExplorationState < Omega::State
 
        @breakable_rock.update();
        @breakable_tree.update();
+       @breakable_cactus.update();
+       @breakable_bush.update();
 
        update_collision_with_map();
     end
@@ -51,11 +61,14 @@ class ExplorationState < Omega::State
             @rockdood.draw();
             @smokey.draw();
 
-            @breakable_rock.draw()
+            @breakable_rock.draw();
             @breakable_tree.draw();
+            @breakable_cactus.draw();
+            @breakable_bush.draw();
         end
 
         @hero.draw_hud();
+        draw_controls()
     end
 
     def update_collision_with_map()
@@ -109,6 +122,21 @@ class ExplorationState < Omega::State
 
     def check_collision(tile1, tile2, z, solid_tiles)
         return (tile1 != nil && check_if_tile_is_solid(solid_tiles, tile1.id)) || (tile2 != nil && check_if_tile_is_solid(solid_tiles, tile2.id)) || ((z != 0 && tile1 != nil) || (z != 0 && tile2 != nil))
+    end
+
+    def draw_controls
+        @text.scale.x = @text.scale.y = 0.5
+        @text.text = "Controls:\nX: Attack\nC: Throw brick\nESC: Check quest"
+        @text.x = Omega.width - @text.width - 2
+        @text.y = Omega.height - @text.height - 7
+        @text.z = Hero::UI_Z;
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
+        @text.draw
     end
 
 end
