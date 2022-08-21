@@ -48,7 +48,7 @@ class QuestState < Omega::State
             @c_quest = $quests_maps.size if @c_quest == 0
             load(false)
             return
-        elsif Omega::just_pressed(Gosu::KB_F1)
+        elsif Omega::just_pressed(Gosu::KB_ESCAPE)
             @finished = true
         end
     end
