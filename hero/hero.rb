@@ -103,6 +103,7 @@ class Hero < Omega::SpriteSheet
             $hero_inventory[resource] += 1;
             loot_info = LootInfo.new(resource, Omega::Vector3.new(18, Omega.height - 12, 0));
             @list_loot_info.push(loot_info)
+            loot_info = nil;
             @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);
         end
     end

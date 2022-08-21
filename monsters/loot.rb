@@ -29,6 +29,8 @@ class Loot < LootIcon
     end
 
     def update()
+        return if (@is_collected)
+
         super();
         update_scale();
         update_hitbox();
@@ -43,7 +45,7 @@ class Loot < LootIcon
         end
 
         if (!@is_collected && @timer_before_being_collectable < 0 && @hitbox.collides?(@hero.hitbox)) then
-            @hero.collect_resource(@resource.to_s)
+            @hero.collect_resource(@resource)
             $sounds["item_collected"].play();
             @is_collected = true;
         end
