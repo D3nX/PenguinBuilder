@@ -84,7 +84,7 @@ class Game < Omega::RenderWindow
     $current_map = "forest" # possible choices are: "forest" || "desert" || "castle"
 
     $quest_status = {
-        "Fountain" => {"available" => true, "done" => true},
+        "Fountain" => {"available" => true, "done" => false},
         "House" => {"available" => false, "done" => false},
         "Bigger House" => {"available" => false, "done" => false},
         "Simple Garden" => {"available" => false, "done" => false},
@@ -116,7 +116,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(WorldMapState.new)
+        Omega.set_state(ConstructionState.new)
     end
    
 end
