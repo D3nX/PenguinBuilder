@@ -1,5 +1,7 @@
 class Notification < Omega::Sprite
 
+    UI_Z = 100_000
+
     def initialize()
         super("assets/notification.png")
         @messages = []
@@ -43,7 +45,7 @@ class Notification < Omega::Sprite
 
         @text.text = @messages[0]
         @text.scale = Omega::Vector2.new(0.7, 0.7)
-        @text.position = Omega::Vector3.new((Omega.width - @text.width) / 2, @position.y + 10, @position.z)
+        @text.position = Omega::Vector3.new((Omega.width - @text.width) / 2, @position.y + 10, @position.z + UI_Z)
         @text.draw()
     end
 

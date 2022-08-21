@@ -195,10 +195,11 @@ class IsoMap
                     fy = y + @position.y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
                     if tile.id >= 0 and tile.id < @tileset.size
-                        @tileset[tile.id].draw(fx, fy - base_z_offset * tile.offset_scale - i * @margin, 0, 1, 1,
+                        screen_y = fy - base_z_offset * tile.offset_scale - i * @margin
+                        @tileset[tile.id].draw(fx, screen_y, screen_y + i * 100, 1, 1,
                                                 Gosu::Color.new(@color.alpha, @color.red - c, @color.green - c, @color.blue - c))
                         if @draw_debug_tile
-                            tile.rect.z = 1000
+                            tile.rect.z = 10000
                             tile.rect.color.alpha = 128
                             tile.rect.draw
                         end

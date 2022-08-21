@@ -4,6 +4,8 @@ class Monster < Omega::SpriteSheet
 
     TIMER_BLINK = 0.5
 
+    UI_Z = 100_000
+
     def initialize(hero, camera, path, width, height, hp, damage)
         super(path,width,height)
         @hero = hero;
@@ -39,6 +41,7 @@ class Monster < Omega::SpriteSheet
         update_velocity();
         update_damage_animation() if (!@can_take_damage)
         update_hitbox();
+        update_z_order();
 
         check_damage() if (!@is_dead)
 
@@ -47,7 +50,10 @@ class Monster < Omega::SpriteSheet
         update_death() if (@is_dead && !@death_animation_is_finished)
 
         for i in 0...@list_items.length do
-            @list_items[i].update();
+            next if (@list_items[i] == nil) 
+
+            @list_items[i].update() 
+            @list_items.delete_at(i) if (@list_items[i].is_collected)
         end
 
     end
@@ -102,7 +108,7 @@ class Monster < Omega::SpriteSheet
                 end
             end
     
-            if (!@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox)) then
+            if (!@hero.is_attacking && @can_take_damage && @hitbox.collides?(@hero.hitbox) && @damage > 0) then
                  @hero.receive_damage(@damage);
             end
     end
@@ -112,7 +118,7 @@ class Monster < Omega::SpriteSheet
 
         @hp -= damage;
 
-        @list_text_damage.push(TextDamage.new(damage,@position, 0.3));
+        @list_text_damage.push(TextDamage.new(damage,Omega::Vector3.new(@position.x - 4, @position.y, UI_Z), 0.3));
 
         $sounds["hit_monster"].play() if (@hp > 0)
             
@@ -123,7 +129,6 @@ class Monster < Omega::SpriteSheet
         if (@hp <= 0) then
             if (!@is_dead) then
                 $sounds["monster_die"].play();
-                # spawn loot here
                 spawn_loot();
                 @is_dead = true 
             end
@@ -134,7 +139,10 @@ class Monster < Omega::SpriteSheet
 
     def update_text_damage()
         for i in 0...@list_text_damage.length
+            next if (@list_text_damage[i] == nil)
+
             @list_text_damage[i].update();
+            @list_text_damage.delete_at(i) if (@list_text_damage[i].alpha <= 0)
         end
     end
 
@@ -159,6 +167,10 @@ class Monster < Omega::SpriteSheet
         if (@blink_nb >= 20) then
             @death_animation_is_finished = true;
         end
+    end
+
+    def update_z_order()
+        @position.z = 100 + @position.y
     end
 
     def draw_text_damage()

@@ -12,6 +12,7 @@ module Omega
             RIGHTUP = 6
             LEFTDOWN = 7
             RIGHTDOWN = 8
+            MIDDLEDOWN = 9
         end
 
         def initialize(text, font, scale = Omega::Vector2.new(1, 1), z_layer = 1)
@@ -71,6 +72,9 @@ module Omega
                     @position.y = game_heigth - text_heigth + y_offset
                 when WindowPos::RIGHTDOWN
                     @position.x = game_width - text_width + x_offset
+                    @position.y = game_heigth - text_heigth + y_offset
+                when WindowPos::MIDDLEDOWN
+                    @position.x = (game_width / 2) - (text_width / 2) + x_offset
                     @position.y = game_heigth - text_heigth + y_offset
                 else
                     raise "Bro r u dumb ?"
