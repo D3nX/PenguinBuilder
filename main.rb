@@ -84,26 +84,33 @@ class Game < Omega::RenderWindow
     $current_map = "forest" # possible choices are: "forest" || "desert" || "castle"
 
     $quest_status = {
-        "Fountain" => {"available" => true, "done" => false},
+        "Fountain" => {"available" => true, "done" => true},
         "House" => {"available" => false, "done" => false},
-        "Bigger House" => {"available" => false, "done" => false}
+        "Bigger House" => {"available" => false, "done" => false},
+        "Simple Garden" => {"available" => false, "done" => false},
+        "Cult place" => {"available" => false, "done" => false},
     }
 
     $quest = 1
 
-    $quests_maps = [
-        IsoMap.new("assets/ctileset.png", 1, 1),
-        IsoMap.new("assets/ctileset.png", 1, 1),
-        IsoMap.new("assets/ctileset.png", 1, 1)
-    ]
+    $quests_maps = []
 
     $construction_state = nil
 
     def load_quests_map
-        for i in 1..$quests_maps.size
-            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
-            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_1.csv")
-            $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_2.csv")
+        dir_size = Dir.entries("./assets/maps/quests")[2..-1].size
+        for i in 1..dir_size
+            $quests_maps << IsoMap.new("assets/ctileset.png", 1, 1)
+            j = 0
+            loop do
+                path = "assets/maps/quests/quest_#{i}/quest_#{i}_layer_#{j}.csv"
+                if File.exists?(path)
+                    $quests_maps[i - 1].load_csv_layer(path)
+                else
+                    break
+                end
+                j += 1
+            end
         end
     end
 
