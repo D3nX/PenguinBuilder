@@ -31,6 +31,7 @@ class QuestState < Omega::State
         @is_hero = is_hero
         @inventory = $inventory
         @inventory = $hero_inventory if is_hero
+        @margin = 150
 
         load_background()
         load_map()
@@ -47,12 +48,18 @@ class QuestState < Omega::State
             return
         elsif Omega::just_pressed(Gosu::KB_LEFT)
             @c_quest -= 1
-            @c_quest %= 4
+            @c_quest %= $quests_maps.size
             @c_quest = $quests_maps.size if @c_quest == 0
             load(false)
             return
         elsif Omega::just_pressed(Gosu::KB_ESCAPE)
             @finished = true
+        end
+
+        if Omega::pressed(Gosu::KB_DOWN)
+            @margin -= 5 if @margin > 0
+        elsif Omega::pressed(Gosu::KB_UP)
+            @margin += 5 if @margin < 300
         end
     end
 
@@ -64,7 +71,7 @@ class QuestState < Omega::State
             center_map_x = (Omega.width / scale - @isomap.width * IsoMap::TILE_WIDTH) / 2
 
             @isomap.position = Omega::Vector3.new(center_map_x - 400 / scale, 450 / scale, 0)
-            @isomap.margin = 200 / scale
+            @isomap.margin = @margin / scale
             @isomap.draw
 
             @isomap.position = Omega::Vector3.new(center_map_x, 280 / scale, 0)
@@ -72,6 +79,7 @@ class QuestState < Omega::State
             @isomap.draw
         end
         draw_ui()
+        draw_controls()
     end
 
     def draw_ui
@@ -80,9 +88,12 @@ class QuestState < Omega::State
 
         @text.scale = Omega::Vector2.new(0.5, 0.5)
 
+        materials = 0
+
         @ressources.each do |k, v|
             if v > 0
                 exploration_inventory = (@is_hero) ? " (+#{$hero_inventory[k]})" : ""
+                materials += 1
                 @text.text = "#{(@available) ? k : "???"}: #{(@available) ? "#{$inventory[k]}" + exploration_inventory : "???"} / #{(@available) ? v : "???"}"
                 @text.x = x
                 @text.y = y
@@ -113,7 +124,7 @@ class QuestState < Omega::State
 
         # Ressources text
         @text.text = "Ressources\n   needed:"
-        @text.y -= (@text.height + 5) * 2 + 65
+        @text.y -= (@text.height + 5) * (materials - 1) + 65
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.draw
 
@@ -146,6 +157,20 @@ class QuestState < Omega::State
         @text.x += 2
         @text.y += 2
         @text.color = Omega::Color.new(255, 240, 200)
+        @text.draw
+    end
+
+    def draw_controls
+        @text.scale = Omega::Vector2.new(0.5, 0.5)
+        @text.text = "Controls:\nRight / Left: Change quest\nUp / Down: Move layers"
+        @text.x = Omega.width - @text.width - 2
+        @text.y = Omega.height - @text.height - 7
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
         @text.draw
     end
 
