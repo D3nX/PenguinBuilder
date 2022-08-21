@@ -6,13 +6,15 @@ class IsoMap
     MAX_Z_HEIGHT = 10
 
     module Block
-        GRASS = 0
-        STONE = 1
-        SAND  = 2
-        WATER = 3
-        WOOD  = 4
-        GLASS = 5
-        DIRT  = 6
+        GRASS   = 0
+        STONE   = 1
+        SAND    = 2
+        WATER   = 3
+        WOOD    = 4
+        GLASS   = 5
+        DIRT    = 6
+        CACTUS  = 7
+        BUSH    = 8
     end
 
     module Rotation
@@ -29,7 +31,9 @@ class IsoMap
         "Water",
         "Wood",
         "Glass",
-        "Dirt"
+        "Dirt",
+        "Cactus",
+        "Bush"
     ]
 
     RotationString = [
@@ -218,7 +222,9 @@ class IsoMap
             "Water" => 0,
             "Wood" => 0,
             "Glass" => 0,
-            "Dirt" => 0
+            "Dirt" => 0,
+            "Cactus" => 0,
+            "Bush" => 0
         }
 
         @blocks.each do |cols|
