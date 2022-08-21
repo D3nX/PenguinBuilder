@@ -4,10 +4,12 @@ require_relative "isomap"
 require_relative "cursor"
 require_relative "itemmenu"
 
+require_relative "cutscene"
 require_relative "queststate"
-require_relative "playstate"
+require_relative "menustate"
 require_relative "explorationstate"
 require_relative "gameoverstate"
+require_relative "backtovillagestate"
 require_relative "textdamage"
 require_relative "looticon"
 require_relative "hero/brick"
@@ -17,8 +19,11 @@ require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
+require_relative "monsters/smokey"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
+require_relative "monsters/breakablecactus"
+require_relative "monsters/breakablebush"
 
 require_relative "constructionstate"
 
@@ -58,7 +63,9 @@ class Game < Omega::RenderWindow
         "Water" => 1000,
         "Wood" => 1000,
         "Glass" => 1000,
-        "Dirt" => 1000
+        "Dirt" => 1000,
+        "Cactus" => 1000,
+        "Bush" => 1000
     }
 
     $hero_inventory = {
@@ -68,7 +75,9 @@ class Game < Omega::RenderWindow
         "Water" => 0,
         "Wood" =>  1,
         "Glass" => 0,
-        "Dirt"  => 0
+        "Dirt"  => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $quest_status = {
@@ -95,7 +104,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end

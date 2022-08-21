@@ -2,6 +2,8 @@ class Cursor < Omega::Sprite
 
     attr_reader :block_id
 
+    UI_Z = 100_000
+
     def initialize(isomap, camera, notification)
         super("assets/cursor.png")
 
@@ -148,6 +150,7 @@ class Cursor < Omega::Sprite
     
         @position.x -= (@position.x - @tile_position.x * IsoMap::TILE_WIDTH) * 0.5
         @position.y -= (@position.y - (@tile_position.y * (IsoMap::TILE_HEIGHT - IsoMap::Z_OFFSET) - @offset)) * 0.5
+        @position.z = UI_Z
         super()
         @camera.follow(self, 0.5) if @lerp != 0.5
     end
@@ -177,6 +180,10 @@ class Cursor < Omega::Sprite
             tpos.x < map_width and tpos.y < map_height
             set_tile_position(tpos)
         end
+    end
+
+    def get_item_name
+        return IsoMap::BlockNames[@block_id]
     end
 
 end

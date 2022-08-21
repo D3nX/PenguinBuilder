@@ -11,7 +11,7 @@ class GameOverState < Omega::State
     def load
         load_hero();
 
-        load_text();
+        @text = Omega::Text.new("NB Resource lost: " + 0.to_s, $font);
 
         @list_loot_icon_to_loose = [];
         @alpha_fade = 0;
@@ -57,16 +57,11 @@ class GameOverState < Omega::State
 
     def load_hero()
         @hero = Omega::SpriteSheet.new("assets/hero.png", 16, 24);
-        @hero.add_animation("DIE", [0]);
+        @hero.add_animation("DIE", [16]);
         @hero.play_animation("DIE");
         @hero.scale.x = @hero.scale.y = HERO_BASE_SCALE;
         @hero.origin.x = @hero.origin.y = 0.5;
         @hero.position = Omega::Vector3.new(Omega.width*0.5, Omega.height*0.5, 0);
-    end
-
-    def load_text()
-        @text = Omega::Text.new("NB Resource lost: " + 0.to_s, $font);
-        
     end
 
     def count_nb_resource_in_inventory()

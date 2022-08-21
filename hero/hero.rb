@@ -5,7 +5,7 @@ class Hero < Omega::SpriteSheet
     SPEED_PICKAXE = 15;
     PICKAXE_ANGLE_RANGE = 150;
     ATTACK_AMPLITUDE_VARIATION = 0.2
-    TIMER_INVINCIBILTY = 2.5
+    TIMER_INVINCIBILTY = 0.9
     TIMER_WAIT_BEFORE_REFILL_ENERGY = 1.2
     ENERGY_COST = 4;
     MP_COST = 3;
@@ -37,6 +37,7 @@ class Hero < Omega::SpriteSheet
         
         @hitbox = Omega::Rectangle.new(0,0,1,1);
         @velocity = Omega::Vector2.new(0,0);
+        @capture_velocity = @velocity.clone;
 
         @timer_invicibility = TIMER_INVINCIBILTY
 
@@ -54,8 +55,16 @@ class Hero < Omega::SpriteSheet
     def update()
         update_velocity();
         update_hitbox();
-        update_inputs();
-        update_damage() if (!@can_take_damage)
+
+        if (@can_take_damage) then
+            update_inputs();
+        else
+            @velocity = Omega::Vector2.new(-@capture_velocity.x * 1.5, -@capture_velocity.y * 1.5)
+            @velocity.y = SPEED*1.5 if (@capture_velocity.x == 0 && @capture_velocity.y == 0)
+            play_animation("hit")
+            update_damage() 
+        end
+        
         update_pickaxe() if (@is_attacking)
         update_energy();
         update_z_order();
@@ -87,14 +96,14 @@ class Hero < Omega::SpriteSheet
 
     def collect_resource(resource)
         case resource
-        when "Grass", "Stone", "Sand", "Water", "Wood", "Glass"
+        when "Mana"
+            @mp += 5;
+            @mp = @mp_max if (@mp >= @mp_max)
+        else
             $hero_inventory[resource] += 1;
             loot_info = LootInfo.new(resource, Omega::Vector3.new(18, Omega.height - 12, 0));
             @list_loot_info.push(loot_info)
             @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);
-        when "Mana"
-            @mp += 5;
-            @mp = @mp_max if (@mp >= @mp_max)
         end
     end
 
@@ -105,6 +114,7 @@ class Hero < Omega::SpriteSheet
             @hp -= damage;
             @camera.shake(16,-1,1);
             @is_dead = true if (@hp <= 0)
+            @capture_velocity = @velocity.clone
             @can_take_damage = false;
         end
     end
@@ -118,20 +128,21 @@ class Hero < Omega::SpriteSheet
         add_animation("left",[4,5,6,7]);
         add_animation("right", [8,9,10,11]);
         add_animation("top", [12,13,14,15]);
+        add_animation("hit", [16]);
     end
 
     def load_statistics()
-        @hp_max = 100;
+        @hp_max = 100 +  (($quest - 1) * 12)
         @hp = @hp_max;
 
-        @mp_max = 50;
+        @mp_max = 50 + (($quest - 1) * 8)
         @mp = @mp_max;
 
-        @energy_max = 80;
+        @energy_max = 80 + (($quest - 1) * 10)
         @energy = @energy_max;
         @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
 
-        @attack = 5;
+        @attack = 5 + (($quest - 1) * 4);
     end
 
     def load_pickaxe()
@@ -163,7 +174,7 @@ class Hero < Omega::SpriteSheet
         @icon_pickaxe_alpha = 255;
         @timer_energy_blink = 0;
 
-        @icon_bag = Omega::Sprite.new("assets/bag.png");
+        @icon_bag = Omega::Sprite.new("assets/backpack.png");
         @icon_bag.origin = Omega::Vector2.new(0.5,0.5);
         @icon_bag.scale = Omega::Vector2.new(2,2);
         @icon_bag.position = Omega::Vector3.new(42, Omega.height - 42, 0);
@@ -195,6 +206,7 @@ class Hero < Omega::SpriteSheet
 
         if (@timer_invicibility < 0) then
             @color = Gosu::Color::WHITE;
+            play_animation("down")
             @can_take_damage = true;
         end
     end
