@@ -36,6 +36,13 @@ class BackToVillageState < Omega::State
         end
 
         update_list_icons();
+
+        if (@village.scale.x > HERO_BASE_SCALE) then
+            @village.scale.x = @village.scale.y -= 0.05;
+
+            @village.scale = Omega::Vector2.new(HERO_BASE_SCALE,HERO_BASE_SCALE) if (@village.scale.x <= HERO_BASE_SCALE)
+        end
+
     end
 
     def draw
@@ -119,7 +126,11 @@ class BackToVillageState < Omega::State
             return if (@list_icons[i] == nil)
 
             @list_icons[i].update() 
-            @list_icons.delete_at(i) if (@list_icons[i].position.x <= Omega.width*0.18);
+
+            if (@list_icons[i].position.x <= Omega.width*0.18) then
+                @list_icons.delete_at(i) 
+                @village.scale.x = @village.scale.y = HERO_BASE_SCALE + 0.4;
+            end
         end
     end
 
