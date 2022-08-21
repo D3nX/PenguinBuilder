@@ -58,7 +58,9 @@ class Game < Omega::RenderWindow
         "Water" => 1000,
         "Wood" => 1000,
         "Glass" => 1000,
-        "Dirt" => 1000
+        "Dirt" => 1000,
+        "Cactus" => 1000,
+        "Bush" => 1000
     }
 
     $hero_inventory = {
@@ -95,7 +97,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(ConstructionState.new)
     end
    
 end

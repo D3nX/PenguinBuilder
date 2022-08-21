@@ -82,9 +82,24 @@ class ConstructionState < Omega::State
     def draw_ui
         @item_menu.draw
 
+        # Text orientation
         @text.scale = Omega::Vector2.new(0.25, 0.25)
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
-        @text.x = (Omega.width - @text.width) / 2
+        @text.x = (Omega.width - @text.width - 290)
+        @text.y = (Omega.height - 125)
+        @text.z = 1000
+        @text.color = Omega::Color::copy(Omega::Color::BLACK)
+        @text.draw
+
+        @text.x -= 2
+        @text.y -= 2
+        @text.color = Omega::Color::copy(Omega::Color::WHITE)
+        @text.draw
+
+        # Text item
+        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text.text = "Item: #{@cursor.get_item_name}"
+        @text.x = 290
         @text.y = (Omega.height - 125)
         @text.z = 1000
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
