@@ -4,8 +4,9 @@ require_relative "isomap"
 require_relative "cursor"
 require_relative "itemmenu"
 
+require_relative "cutscene"
 require_relative "queststate"
-require_relative "playstate"
+require_relative "menustate"
 require_relative "explorationstate"
 require_relative "gameoverstate"
 require_relative "textdamage"
@@ -97,7 +98,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ConstructionState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end
