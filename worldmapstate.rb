@@ -33,7 +33,7 @@ class WorldMapState < Omega::State
                 if not Omega.is_transition?
                     transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
                         if @current_place == 2
-                            Omega.set_state(ConstructionState.new)
+                            Omega.set_state($construction_state)
                         else
                             # Set the map in desert / castle / forest
                             Omega.set_state(ExplorationState.new)

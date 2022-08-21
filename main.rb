@@ -58,15 +58,15 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 1000,
-        "Stone" => 1000,
-        "Sand" => 1000,
-        "Water" => 1000,
-        "Wood" => 1000,
-        "Glass" => 1000,
-        "Dirt" => 1000,
-        "Cactus" => 1000,
-        "Bush" => 1000
+        "Grass" => 5,
+        "Stone" => 3,
+        "Sand" => 0,
+        "Water" => 0,
+        "Wood" => 2,
+        "Glass" => 0,
+        "Dirt" => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $hero_inventory = {
@@ -95,6 +95,8 @@ class Game < Omega::RenderWindow
         IsoMap.new("assets/ctileset.png", 1, 1)
     ]
 
+    $construction_state = nil
+
     def load_quests_map
         for i in 1..$quests_maps.size
             $quests_maps[i - 1].load_csv_layer("assets/maps/quests/quest_#{i}/quest_#{i}_layer_0.csv")
@@ -105,7 +107,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(ConstructionState.new)
     end
    
 end

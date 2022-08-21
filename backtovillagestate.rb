@@ -118,7 +118,7 @@ class BackToVillageState < Omega::State
             @alpha_fade += FADE_SPEED;
             if (@alpha_fade >= 255) then
                 @alpha_fade = 255;
-                Omega.set_state(ConstructionState.new)
+                Omega.set_state(WorldMapState.new)
             end
         end
     end
