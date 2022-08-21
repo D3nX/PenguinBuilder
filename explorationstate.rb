@@ -46,7 +46,7 @@ class ExplorationState < Omega::State
 
         if Omega::just_pressed(Gosu::KB_ESCAPE)
             @substate = QuestState.new
-            @substate.load
+            @substate.load(true, true)
             return
         end
 
