@@ -21,6 +21,7 @@ class BackToVillageState < Omega::State
         
         @alpha_fade = 0;
         @alpha_flash = 255;
+        @quantity_item = 0;
 
         transfer_to_main_inventory();
     end
@@ -94,7 +95,8 @@ class BackToVillageState < Omega::State
         $sounds["validate"].play();
 
         @list_icons.push(icon)
-        @text.text = "Resources obtained: " + @list_icons.length.to_s
+        @quantity_item += 1;
+        @text.text = "Resources obtained: " + @quantity_item.to_s;
     end
 
     def remove_from_hero_inventory(resource, quantity)

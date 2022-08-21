@@ -72,7 +72,9 @@ class Game < Omega::RenderWindow
         "Water" => 0,
         "Wood" =>  1,
         "Glass" => 0,
-        "Dirt"  => 0
+        "Dirt"  => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $quest_status = {
@@ -99,7 +101,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ConstructionState.new)
+        Omega.set_state(ExplorationState.new)
     end
    
 end
