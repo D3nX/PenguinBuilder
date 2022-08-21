@@ -36,7 +36,7 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $musics = {
-        "chaos_penguin_castle_ruins" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
+        "castle" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
         "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
         "desert" => Gosu::Song.new("assets/musics/desert.ogg"),
         "forest" => Gosu::Song.new("assets/musics/forest.ogg"),
@@ -70,16 +70,18 @@ class Game < Omega::RenderWindow
     }
 
     $hero_inventory = {
-        "Grass" => 12,
-        "Stone" => 8,
-        "Sand" =>  1,
+        "Grass" => 0,
+        "Stone" => 0,
+        "Sand" =>  0,
         "Water" => 0,
-        "Wood" =>  1,
+        "Wood" =>  0,
         "Glass" => 0,
         "Dirt"  => 0,
         "Cactus" => 0,
         "Bush" => 0
     }
+
+    $current_map = "forest" # possible choices are: "forest" || "desert" || "castle"
 
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
@@ -105,7 +107,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ExplorationState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end
