@@ -35,7 +35,9 @@ class WorldMapState < Omega::State
                         if @current_place == 2
                             Omega.set_state($construction_state)
                         else
-                            # Set the map in desert / castle / forest
+                            $current_map = "desert" if @current_place == 0
+                            $current_map = "castle" if @current_place == 1
+                            $current_map = "forest" if @current_place == 3
                             Omega.set_state(ExplorationState.new)
                         end
                     end
