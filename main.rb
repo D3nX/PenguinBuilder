@@ -105,7 +105,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(CutScene.new)
+        Omega.set_state(ExplorationState.new)
     end
    
 end
