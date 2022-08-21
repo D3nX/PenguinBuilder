@@ -18,6 +18,7 @@ require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
+require_relative "monsters/smokey"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
 
@@ -96,7 +97,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(BackToVillageState.new)
+        Omega.set_state(ExplorationState.new)
     end
    
 end
