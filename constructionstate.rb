@@ -60,7 +60,7 @@ class ConstructionState < Omega::State
         end
         @cursor.update
 
-        if Omega::just_pressed(Gosu::KB_F1)
+        if Omega::just_pressed(Gosu::KB_ESCAPE)
             @substate = QuestState.new
             @substate.load
         end
@@ -117,7 +117,7 @@ class ConstructionState < Omega::State
 
     def draw_controls
         @text.scale = Omega::Vector2.new(0.15, 0.15)
-        @text.text = "Controls:\nF1: Check quests\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate"
+        @text.text = "Controls:\nTab: Change item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate\nESC: Check quests"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
