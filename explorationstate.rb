@@ -33,9 +33,23 @@ class ExplorationState < Omega::State
         @map.load_csv_layer("assets/maps/map_plains_layer_1.csv");
         @map.load_csv_layer("assets/maps/map_plains_layer_2.csv");
         @map.light = nil
+
+        @substate = nil
     end
 
     def update()
+        if @substate
+            @substate.update
+            @substate = nil if @substate.finished
+            return
+        end
+
+        if Omega::just_pressed(Gosu::KB_F1)
+            @substate = QuestState.new
+            @substate.load
+            return
+        end
+
        @hero.update();
 
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
@@ -53,6 +67,11 @@ class ExplorationState < Omega::State
     end
 
     def draw()
+        if @substate
+            @substate.draw
+            return
+        end
+
         @camera.draw() do
             @map.draw();
 
@@ -126,7 +145,7 @@ class ExplorationState < Omega::State
 
     def draw_controls
         @text.scale.x = @text.scale.y = 0.5
-        @text.text = "Controls:\nX: Attack\nC: Throw brick\nESC: Check quest"
+        @text.text = "Controls:\nF1: Check quests\nX: Attack\nC: Throw brick\nESC: Check quest"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.z = Hero::UI_Z;
