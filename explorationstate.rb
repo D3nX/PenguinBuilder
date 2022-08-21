@@ -17,7 +17,10 @@ class ExplorationState < Omega::State
         @breakable_tree = BreakableTree.new(@hero, @camera)
         @breakable_tree.position = Omega::Vector3.new(10*16,11*16,0);
 
-        @map = IsoMap.new("assets/ctileset.png",48*16,20*16);
+        @smokey = Smokey.new(@hero, @camera);
+        @smokey.position = Omega::Vector3.new(12*16,10*16,0);
+
+        @map = IsoMap.new("assets/ctileset.png",48,20);
         @map.load_csv_layer("assets/maps/map_plains_layer_0.csv");
         @map.load_csv_layer("assets/maps/map_plains_layer_1.csv");
         @map.load_csv_layer("assets/maps/map_plains_layer_2.csv");
@@ -27,12 +30,11 @@ class ExplorationState < Omega::State
     def update()
        @hero.update();
 
-       if (@hero.hp <= 0) then
-        Omega.set_state(GameOverState.new)
-       end
-
+       Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
+       Omega.set_state(BackToVillageState.new) if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0)
 
        @rockdood.update();
+       @smokey.update();
 
        @breakable_rock.update();
        @breakable_tree.update();
@@ -47,6 +49,7 @@ class ExplorationState < Omega::State
             @hero.draw();
 
             @rockdood.draw();
+            @smokey.draw();
 
             @breakable_rock.draw()
             @breakable_tree.draw();

@@ -87,7 +87,7 @@ class Hero < Omega::SpriteSheet
 
     def collect_resource(resource)
         case resource
-        when "Grass", "Stone", "Sand", "Water", "Wood", "Glass"
+        when "Grass", "Stone", "Sand", "Water", "Wood", "Glass", "Dirt"
             $hero_inventory[resource] += 1;
             loot_info = LootInfo.new(resource, Omega::Vector3.new(18, Omega.height - 12, 0));
             @list_loot_info.push(loot_info)
@@ -121,17 +121,17 @@ class Hero < Omega::SpriteSheet
     end
 
     def load_statistics()
-        @hp_max = 100;
+        @hp_max = 100 +  (($quest - 1) * 12)
         @hp = @hp_max;
 
-        @mp_max = 50;
+        @mp_max = 50 + (($quest - 1) * 8)
         @mp = @mp_max;
 
-        @energy_max = 80;
+        @energy_max = 80 + (($quest - 1) * 10)
         @energy = @energy_max;
         @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
 
-        @attack = 5;
+        @attack = 5 + (($quest - 1) * 4);
     end
 
     def load_pickaxe()
@@ -163,7 +163,7 @@ class Hero < Omega::SpriteSheet
         @icon_pickaxe_alpha = 255;
         @timer_energy_blink = 0;
 
-        @icon_bag = Omega::Sprite.new("assets/bag.png");
+        @icon_bag = Omega::Sprite.new("assets/backpack.png");
         @icon_bag.origin = Omega::Vector2.new(0.5,0.5);
         @icon_bag.scale = Omega::Vector2.new(2,2);
         @icon_bag.position = Omega::Vector3.new(42, Omega.height - 42, 0);

@@ -83,7 +83,7 @@ class Monster < Omega::SpriteSheet
     def update_damage_animation()
         play_animation("HIT")
 
-        @color = Gosu::Color::RED;
+        @color = Gosu::Color::GRAY;
         @timer_invicibility -= 0.1;
         @scale.x -= 0.04;
         @scale.y -= 0.04;
