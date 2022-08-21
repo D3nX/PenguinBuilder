@@ -25,9 +25,12 @@ class QuestState < Omega::State
         @text = Omega::Text.new("", Gosu::Font.new(60))
     end
 
-    def load(reset_c_quest = true)
+    def load(reset_c_quest = true, is_hero = false)
         @c_quest = $quest if reset_c_quest
         @finished = false
+        @is_hero = is_hero
+        @inventory = $inventory
+        @inventory = $hero_inventory if is_hero
 
         load_background()
         load_map()
@@ -79,7 +82,8 @@ class QuestState < Omega::State
 
         @ressources.each do |k, v|
             if v > 0
-                @text.text = "#{(@available) ? k : "???"}: #{(@available) ? $inventory[k] : "???"} / #{(@available) ? v : "???"}"
+                exploration_inventory = (@is_hero) ? " (+#{$hero_inventory[k]})" : ""
+                @text.text = "#{(@available) ? k : "???"}: #{(@available) ? "#{$inventory[k]}" + exploration_inventory : "???"} / #{(@available) ? v : "???"}"
                 @text.x = x
                 @text.y = y
                 @text.color = Omega::Color::copy(Omega::Color::BLACK)
