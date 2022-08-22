@@ -22,7 +22,7 @@ class QuestState < Omega::State
     end
 
     def load_text
-        @text = Omega::Text.new("", Gosu::Font.new(60))
+        @text = Omega::Text.new("", $font)
     end
 
     def load(reset_c_quest = true, is_hero = false)
@@ -162,7 +162,7 @@ class QuestState < Omega::State
 
     def draw_controls
         @text.scale = Omega::Vector2.new(0.5, 0.5)
-        @text.text = "Controls:\nRight / Left: Change quest\nUp / Down: Move layers"
+        @text.text = "Controls:\nRight / Left: Change quest\nUp / Down: Move layers\nESC: Go back"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
