@@ -6,6 +6,8 @@ class Monster < Omega::SpriteSheet
 
     UI_Z = 100_000
 
+    attr_reader :death_animation_is_finished
+
     def initialize(hero, camera, path, width, height, hp, damage)
         super(path,width,height)
         @hero = hero;
@@ -166,6 +168,7 @@ class Monster < Omega::SpriteSheet
 
         if (@blink_nb >= 20) then
             @death_animation_is_finished = true;
+            @list_text_damage = [];
         end
     end
 
@@ -199,7 +202,9 @@ class Monster < Omega::SpriteSheet
                 loot.position = @position.clone;
                 range = 2;
                 loot.velocity = Omega::Vector2.new(rand(-range..range),rand(-range..range));
+                
                 @list_items.push(loot);
+                loot = nil;
             end
         end
     end
