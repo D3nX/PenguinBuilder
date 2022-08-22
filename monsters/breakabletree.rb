@@ -9,6 +9,8 @@ class BreakableTree < Monster
         add_animation("HIT", [0])
         add_animation("DIE", [0]);
         play_animation("IDLE");
+
+        @hitbox_offset = Omega::Rectangle.new(5,8,-10,-14);
     end
 
     def update()
