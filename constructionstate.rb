@@ -1,7 +1,7 @@
 class ConstructionState < Omega::State
 
     def load_map
-        @isomap = IsoMap.new("assets/ctileset.png", 25, 25)
+        @isomap = IsoMap.new("assets/ctileset.png", 27, 27)
 
         quest_nb = 3
 
@@ -26,7 +26,7 @@ class ConstructionState < Omega::State
     end
 
     def load_camera
-        @camera = Omega::Camera.new(false)
+        @camera = Omega::Camera.new(true)
         @camera.scale = Omega::Vector2.new(3, 3)
     end
 
@@ -80,6 +80,7 @@ class ConstructionState < Omega::State
             @substate = QuestState.new
             @substate.load
         end
+
     end
 
     def draw
@@ -88,7 +89,7 @@ class ConstructionState < Omega::State
             return
         end
 
-        @camera.draw do
+        @camera.draw() do
             @isomap.draw
             @cursor.draw
         end
