@@ -134,7 +134,7 @@ class GameOverState < Omega::State
             if (@alpha_fade >= 255) then
                 @alpha_fade = 255;
                 transfer_to_main_inventory();
-                Omega.set_state(ConstructionState.new)
+                Omega.set_state(WorldMapState.new)
             end
         end
     end

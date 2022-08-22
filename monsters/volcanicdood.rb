@@ -6,7 +6,7 @@ class Volcanicdood < Monster
     HUD_THICKNESS = 4;
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/volcanicdood.png", 30, 40, 660, 17)
+        super(hero, camera, "assets/volcanicdood.png", 30, 40, 817, 17)
         set_loot(30,["Glass", "Stone", "Mana"], 75)
 
         @name = "Volcanic Dood";
