@@ -24,6 +24,8 @@ class BackToVillageState < Omega::State
         @quantity_item = 0;
 
         transfer_to_main_inventory();
+
+        $musics["return_to_village"].play(false)
     end
 
     def update

@@ -41,7 +41,10 @@ class ExplorationState < Omega::State
        @hero.update();
 
        for i in 0...@list_monsters.length do
+            next if (@list_monsters[i] == nil)
+
             @list_monsters[i].update();
+            @list_monsters.delete_at(i) if (@list_monsters[i].death_animation_is_finished)
        end
 
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
