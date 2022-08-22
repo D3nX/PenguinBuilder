@@ -4,7 +4,7 @@ class BackToVillageState < Omega::State
     TIMER_ADD_LOOT = 0.06;
     ICON_SPEED = 16;
     FLASH_SPEED = 3
-    FADE_SPEED = 3;
+    FADE_SPEED = 1.8;
 
     def load
         load_hero();
@@ -24,6 +24,8 @@ class BackToVillageState < Omega::State
         @quantity_item = 0;
 
         transfer_to_main_inventory();
+
+        $musics["return_to_village"].play(false)
     end
 
     def update

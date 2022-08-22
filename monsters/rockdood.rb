@@ -1,7 +1,7 @@
 class Rockdood < Monster
 
-    SPEED = 0.2
-    DISTANCE_DETECTION = 90
+    SPEED = 0.4
+    DISTANCE_DETECTION = 130
 
     def initialize(hero, camera)
         super(hero, camera, "assets/rockdood.png", 30, 40, 78, 12)
@@ -17,9 +17,13 @@ class Rockdood < Monster
         add_animation("HIT", [16]);
 
         add_animation("DIE", [16]);
+
+        @hitbox_offset = Omega::Rectangle.new(4,14,-8,-20);
     end
 
     def update()
+        if (@hp < 0) then @velocity.x = @velocity.y = 0; end
+
         super()
 
         # Update only if rockdood is near the hero
@@ -36,6 +40,16 @@ class Rockdood < Monster
         if (@hero.position.y >= @position.y + 8) then
             play_animation("DOWN") if (@current_animation != "DOWN")
             @velocity.y = SPEED;
+        end
+
+        if (@hero.position.x <= @position.x - 8) then
+            play_animation("LEFT") if (@current_animation != "LEFT" && @velocity.y == 0)
+            @velocity.x = -SPEED;
+        end
+
+        if (@hero.position.x >= @position.x + 8) then
+            play_animation("RIGHT") if (@current_animation != "RIGHT" && @velocity.y == 0)
+            @velocity.x = SPEED;
         end
         
         #puts "velocity x : " + @velocity.x.to_s + " | " + @velocity.y.to_s

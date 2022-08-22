@@ -1,7 +1,7 @@
 class ExplorationState < Omega::State
 
     def load
-        @camera = Omega::Camera.new(false)
+        @camera = Omega::Camera.new(true)
         @camera.scale = Omega::Vector2.new(3,3)
         
         @hero = Hero.new(@camera);
@@ -41,7 +41,10 @@ class ExplorationState < Omega::State
        @hero.update();
 
        for i in 0...@list_monsters.length do
+            next if (@list_monsters[i] == nil)
+
             @list_monsters[i].update();
+            @list_monsters.delete_at(i) if (@list_monsters[i].death_animation_is_finished)
        end
 
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
@@ -55,15 +58,26 @@ class ExplorationState < Omega::State
             @substate.draw
             return
         end
-
-        @camera.draw() do
+        
+        @camera.draw(Omega.width / @camera.scale.x, Omega.height / @camera.scale.y,
+                        (@map.width + 13) * IsoMap::TILE_WIDTH, (@map.height + 8) * IsoMap::TILE_WIDTH) do
             @map.draw();
 
             @hero.draw();
 
             for i in 0...@list_monsters.length do
                 @list_monsters[i].draw();
+
+                if (@list_monsters[i].can_draw_hud) then
+                    @list_monsters[i].draw_life();
+                end
            end
+        end
+
+        for i in 0...@list_monsters.length do
+            if (@list_monsters[i].can_draw_hud) then
+                @list_monsters[i].draw_life();
+            end
         end
 
         # Interfaces :
@@ -82,6 +96,9 @@ class ExplorationState < Omega::State
         map_entities.set_type(14, "cactus")
         map_entities.set_type(15, "tree")
         map_entities.set_type(16, "rock")
+        map_entities.set_type(17, "volcanicdood")
+        map_entities.set_type(18, "whitesmokey")
+        map_entities.set_type(19, "hammer")
 
         map_entities.layers["entities"].each do |t|
             if t.type == "hero"
@@ -91,26 +108,47 @@ class ExplorationState < Omega::State
                 rockdood = Rockdood.new(@hero, @camera)
                 rockdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(rockdood)
+                rockdood = nil;
             elsif t.type == "smokey"
                 smokey = Smokey.new(@hero, @camera)
                 smokey.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(smokey)
+                smokey = nil;
             elsif t.type == "bush"
                 bush = BreakableBush.new(@hero, @camera)
                 bush.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(bush)
+                bush = nil;
             elsif t.type == "cactus"
                 cactus = BreakableCactus.new(@hero, @camera)
                 cactus.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(cactus)
+                cactus = nil;
             elsif t.type == "tree"
                 tree = BreakableTree.new(@hero, @camera)
                 tree.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(tree)
+                tree = nil;
             elsif t.type == "rock"
                 rock = BreakableRock.new(@hero, @camera)
                 rock.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(rock)
+                rock = nil;
+            elsif t.type == "volcanicdood"
+                volcanicdood = Volcanicdood.new(@hero, @camera)
+                volcanicdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(volcanicdood)
+                volcanicdood = nil;
+            elsif t.type == "whitesmokey"
+                white_smokey = WhiteSmokey.new(@hero, @camera)
+                white_smokey.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(white_smokey)
+                white_smokey = nil;
+            elsif t.type == "hammer"
+                hammer = BreakableHammer.new(@hero, @camera)
+                hammer.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(hammer)
+                hammer = nil;
             end
         end
     end
