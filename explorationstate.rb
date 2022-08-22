@@ -1,7 +1,7 @@
 class ExplorationState < Omega::State
 
     def load
-        @camera = Omega::Camera.new(false)
+        @camera = Omega::Camera.new(true)
         @camera.scale = Omega::Vector2.new(3,3)
         
         @hero = Hero.new(@camera);
@@ -58,8 +58,9 @@ class ExplorationState < Omega::State
             @substate.draw
             return
         end
-
-        @camera.draw() do
+        
+        @camera.draw(Omega.width / @camera.scale.x, Omega.height / @camera.scale.y,
+                        (@map.width + 13) * IsoMap::TILE_WIDTH, (@map.height + 8) * IsoMap::TILE_WIDTH) do
             @map.draw();
 
             @hero.draw();
