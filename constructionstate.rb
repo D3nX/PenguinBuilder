@@ -40,7 +40,7 @@ class ConstructionState < Omega::State
 
     def load_ui
         @item_menu = ItemMenu.new(@isomap, @cursor)
-        @text = Omega::Text.new("", Omega::DefaultFont)
+        @text = Omega::Text.new("", $font)
     end
 
     def load
@@ -99,7 +99,7 @@ class ConstructionState < Omega::State
         @item_menu.draw
 
         # Text orientation
-        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text.set_scale(0.6)
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
         @text.x = (Omega.width - @text.width - 290)
         @text.y = (Omega.height - 125)
@@ -113,7 +113,7 @@ class ConstructionState < Omega::State
         @text.draw
 
         # Text item
-        @text.scale = Omega::Vector2.new(0.25, 0.25)
+        @text.set_scale(0.6)
         @text.text = "Item: #{@cursor.get_item_name}"
         @text.x = 290
         @text.y = (Omega.height - 125)
@@ -132,7 +132,7 @@ class ConstructionState < Omega::State
     end
 
     def draw_controls
-        @text.scale = Omega::Vector2.new(0.15, 0.15)
+        @text.scale = Omega::Vector2.new(0.35, 0.35)
         @text.text = "Controls:\nQ / W: Next / previous item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate\nESC: Check quests\nP: Go to world map"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
