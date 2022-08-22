@@ -21,6 +21,8 @@ class GameOverState < Omega::State
 
         @nb_elements_in_inventory = count_nb_resource_in_inventory()
         @nb_resource_to_loose = ((@nb_elements_in_inventory*PERCENTAGE_TO_LOOSE)/100).to_i;
+
+        $musics["game_over"].play(false)
     end
 
     def update

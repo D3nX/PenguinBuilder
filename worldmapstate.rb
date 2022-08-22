@@ -16,6 +16,8 @@ class WorldMapState < Omega::State
             Omega::Vector2.new(950, 340),
         ]
         @current_place = 0
+
+        $musics["world_map"].play(true)
     end
 
     def update

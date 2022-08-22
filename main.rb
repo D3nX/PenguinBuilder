@@ -40,9 +40,12 @@ class Game < Omega::RenderWindow
         "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
         "desert" => Gosu::Song.new("assets/musics/desert.ogg"),
         "forest" => Gosu::Song.new("assets/musics/forest.ogg"),
+        "game_over" => Gosu::Song.new("assets/musics/game_over.ogg"),
         "intro" =>  Gosu::Song.new("assets/musics/intro.ogg"),
+        "return_to_village" =>  Gosu::Song.new("assets/musics/return_to_village.ogg"),
         "title_screen" => Gosu::Song.new("assets/musics/title_screen.ogg"),
-        "victory" => Gosu::Song.new("assets/musics/victory.ogg")
+        "victory" => Gosu::Song.new("assets/musics/victory.ogg"),
+        "world_map" => Gosu::Song.new("assets/musics/world_map.ogg")
     }
 
     $sounds = {
