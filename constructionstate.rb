@@ -2,7 +2,7 @@ class ConstructionState < Omega::State
 
     def load_map
         @isomap = IsoMap.new("assets/ctileset.png", 27, 27)
-        $musics["construction_mode"].play(true)
+       
 
         quest_nb = 3
 
@@ -45,6 +45,8 @@ class ConstructionState < Omega::State
     end
 
     def load
+        $musics["construction_mode"].play(true)
+        
         if not defined? @@initialized
             load_map()
             load_camera()

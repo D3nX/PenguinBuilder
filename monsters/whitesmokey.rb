@@ -7,7 +7,7 @@ class WhiteSmokey < Monster
     MUSIC_DISTANCE_DETECTION = 160
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/smokey.png", 30, 30, 410, 11)
+        super(hero, camera, "assets/smokey.png", 30, 30, 640, 11)
         set_loot(36,["Water", "Sand", "Mana"], 75)
 
         @name = "Dark Smokey"
@@ -81,7 +81,7 @@ class WhiteSmokey < Monster
 
     def update_music_detection()
         @can_draw_hud = @boss_music_is_launch;
-        
+
         if (!@boss_music_is_launch && Omega.distance(@hero.position, @position) <= MUSIC_DISTANCE_DETECTION) then
 
             $musics[$current_map].volume -= 0.02;

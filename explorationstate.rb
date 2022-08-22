@@ -11,6 +11,7 @@ class ExplorationState < Omega::State
         @text = Omega::Text.new("", $font)
 
         $musics[$current_map].play(true)
+        $musics[$current_map].volume = 1.0
 
         @map = IsoMap.new("assets/ctileset.png",48,20);
         @map.load_csv_layer("assets/maps/" + $current_map + "_layer_0.csv");
