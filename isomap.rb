@@ -60,6 +60,7 @@ class IsoMap
     attr_accessor :position, :rotation, :light, :margin, :color
 
     def initialize(tileset_path, width, height)
+        @@border_tileset ||= Gosu::Image.load_tiles("assets/tile_borders.png", TILE_WIDTH, TILE_WIDTH, :tileable => true)
         @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT, :tileable => true)
         @width = width
         @height = height
@@ -113,6 +114,8 @@ class IsoMap
     def push_block(x, y, id, offset_scale = 0)
         if @blocks[y][x].size < Z_OFFSET
             z = @blocks[y][x].size
+
+            puts z
             @blocks[y][x] << IsoTile.new(id, offset_scale, z, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
             return true
         else
@@ -199,10 +202,11 @@ class IsoMap
                         @tileset[tile.id].draw(fx, screen_y, screen_y + i * 100, 1, 1,
                                                 Gosu::Color.new(@color.alpha, @color.red - c, @color.green - c, @color.blue - c))
                         if @draw_debug_tile
-                            tile.rect.z = 10000
+                            tile.rect.z = screen_y + i * 100 + 10000
                             tile.rect.color.alpha = 128
                             tile.rect.draw
                         end
+                        draw_border(tile, x, y, fx, screen_y, screen_y + i * 100)
                         tile.offset_scale -= (tile.offset_scale - 1.0) * 0.1
                     end
                     base_z_offset += Z_OFFSET
@@ -212,6 +216,36 @@ class IsoMap
             x = 0
             y += TILE_HEIGHT - Z_OFFSET
         end
+    end
+
+    def draw_border(tile, x, y, draw_x, draw_y, draw_z)
+        around = [
+            tile_at(x + 1, y, tile.z),
+            tile_at(x, y + 1, tile.z),
+            tile_at(x - 1, y, tile.z),
+            tile_at(x, y - 1, tile.z)
+        ]
+
+        is_right        = around[0]
+        is_left         = around[2]
+        is_up           = around[3]
+        is_down         = around[1]
+
+        is_no_one_around = (!is_right && !is_down && !is_left && !is_up)
+        is_right_only    = (is_right && !is_down && !is_left && !is_up)
+        is_left_only     = (!is_right && !is_down && is_left && !is_up)
+        is_up_only       = (!is_right && !is_down && is_left && !is_up)
+        is_down_only     = (!is_right && is_down && !is_left && !is_up)
+
+        # puts tile.z
+        if tile.z == 0
+            puts "hehehe"
+        end
+
+        if is_left
+            @@border_tileset[4].draw(draw_x, draw_y, draw_z)
+        end
+        
     end
 
     def get_ressource_list

@@ -26,7 +26,7 @@ class ConstructionState < Omega::State
     end
 
     def load_camera
-        @camera = Omega::Camera.new(true)
+        @camera = Omega::Camera.new(false)
         @camera.scale = Omega::Vector2.new(3, 3)
     end
 
