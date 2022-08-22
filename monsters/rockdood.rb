@@ -17,9 +17,13 @@ class Rockdood < Monster
         add_animation("HIT", [16]);
 
         add_animation("DIE", [16]);
+
+        @hitbox_offset = Omega::Rectangle.new(4,14,-8,-20);
     end
 
     def update()
+        if (@hp < 0) then @velocity.x = @velocity.y = 0; end
+
         super()
 
         # Update only if rockdood is near the hero
