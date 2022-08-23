@@ -58,8 +58,6 @@ class ConstructionState < Omega::State
     end
 
     def update
-        Omega.title = "FPS: #{Gosu.fps}"
-
         if @substate
             @substate.update
             @substate = nil if @substate.finished
@@ -81,6 +79,7 @@ class ConstructionState < Omega::State
         @cursor.update
 
         if Omega::just_pressed(Gosu::KB_ESCAPE)
+            $sounds["validate"].play()
             @substate = QuestState.new
             @substate.load
         end

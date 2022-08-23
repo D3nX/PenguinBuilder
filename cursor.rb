@@ -30,6 +30,7 @@ class Cursor < Omega::Sprite
             
                             name = $quest_status.keys()[$quest - 1]
                             $quest_status[name]["available"] = true
+                            $sounds["quest_finished"].play()
                             @notification.launch(["Quest accomplished!", "You are now stronger", "Press ESCAPE to check for the next quest!"])
                         else
                             @notification.launch(["Quest accomplished!",
