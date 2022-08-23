@@ -56,6 +56,7 @@ class QuestState < Omega::State
             return
         elsif Omega::just_pressed(Gosu::KB_ESCAPE)
             @finished = true
+            $sounds["cancel"].play()
         end
 
         if Omega::pressed(Gosu::KB_DOWN)
