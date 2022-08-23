@@ -362,7 +362,11 @@ class IsoMap
     def check_correspondance_at(x, y, blocks_ids, other_blocks_ids)
         for oby in 0...other_blocks_ids.size
             for obx in 0...other_blocks_ids[oby].size
-                if blocks_ids[y + oby][x + obx] != other_blocks_ids[oby][obx]
+                begin
+                    if blocks_ids[y + oby][x + obx] != other_blocks_ids[oby][obx]
+                        return false
+                    end
+                rescue
                     return false
                 end
             end
