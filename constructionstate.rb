@@ -44,8 +44,6 @@ class ConstructionState < Omega::State
     end
 
     def load
-        $musics["construction_mode"].play(true)
-        
         if not defined? @@initialized
             load_map()
             load_camera()
@@ -55,10 +53,13 @@ class ConstructionState < Omega::State
             @substate = nil
             @@initialized = true
         end
+
         $musics["construction_mode"].play(true)
     end
 
     def update
+        Omega.title = "FPS: #{Gosu.fps}"
+
         if @substate
             @substate.update
             @substate = nil if @substate.finished
@@ -95,7 +96,7 @@ class ConstructionState < Omega::State
         Gosu.draw_rect(0, 0, Omega.width, Omega.height, Gosu::Color.new(10, 100, 255), 0)
 
         @camera.draw() do
-            @isomap.draw
+            @isomap.draw(@camera)
             @cursor.draw
         end
         draw_ui
