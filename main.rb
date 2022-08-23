@@ -61,11 +61,12 @@ class Game < Omega::RenderWindow
         "hit_monster" =>  Gosu::Sample.new("assets/sounds/hit_monster.wav"),
         "item_collected" => Gosu::Sample.new("assets/sounds/item_collected.wav"),
         "monster_die" => Gosu::Sample.new("assets/sounds/monster_die.wav"),
+        "put_block" => Gosu::Sample.new("assets/sounds/put_block.wav"),
+        "quest_finished" => Gosu::Sample.new("assets/sounds/quest_finished.wav"),
+        "remove_block" => Gosu::Sample.new("assets/sounds/remove_block.wav"),
         "select" => Gosu::Sample.new("assets/sounds/select.wav"),
         "throw_brick" => Gosu::Sample.new("assets/sounds/throw_brick.wav"),
         "validate" => Gosu::Sample.new("assets/sounds/validate.wav"),
-        "put_block" => Gosu::Sample.new("assets/sounds/put_block.wav"),
-        "remove_block" => Gosu::Sample.new("assets/sounds/remove_block.wav")
     }
 
     $inventory = {
