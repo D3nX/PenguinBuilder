@@ -30,7 +30,7 @@ class Smokey < Monster
 
         @timer_direction -= 0.01
 
-         if (!@can_take_damage || @hp <= 0) then
+         if (!@can_take_damage || @hp <= 0 || Omega.distance(@hero.position, @position) > 300) then
             @velocity.x = @velocity.y = 0;
             return
         end

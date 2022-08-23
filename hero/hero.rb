@@ -69,8 +69,11 @@ class Hero < Omega::SpriteSheet
         update_energy();
         update_z_order();
 
-        for i in 0...list_bricks.length do
-            list_bricks[i].update();
+        for i in 0...@list_bricks.length do
+            next if (@list_bricks[i] == nil)
+            
+            @list_bricks[i].update();
+            @list_bricks.delete_at(i) if (Omega.distance(@list_bricks[i].position, @position) > 200)
         end
         
     end
@@ -197,8 +200,6 @@ class Hero < Omega::SpriteSheet
         @hitbox.position.y = @position.y-(@height*@scale.y*@origin.y) +15
         @hitbox.width = @width*@scale.x - 4;
         @hitbox.height = @height*@scale.y - 15;
-
-        @can_draw_hitbox = !@can_draw_hitbox if Omega::just_pressed(Gosu::KB_P) #TODO To Remove
     end
 
     def update_damage()

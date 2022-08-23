@@ -27,6 +27,7 @@ require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
 require_relative "monsters/breakablecactus"
 require_relative "monsters/breakablebush"
+require_relative "monsters/breakablewindow"
 require_relative "monsters/breakableHammer"
 
 require_relative "constructionstate"

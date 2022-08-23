@@ -75,8 +75,6 @@ class Monster < Omega::SpriteSheet
         for i in 0...@list_items.length do
             @list_items[i].draw();
         end
-
-        @can_draw_hitbox = !@can_draw_hitbox if (Omega::just_pressed(Gosu::KB_H))
     end
 
     def update_velocity()
