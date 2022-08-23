@@ -62,7 +62,7 @@ class ExplorationState < Omega::State
         
         @camera.draw(Omega.width / @camera.scale.x, Omega.height / @camera.scale.y,
                         (@map.width + 13) * IsoMap::TILE_WIDTH, (@map.height + 8) * IsoMap::TILE_WIDTH) do
-            @map.draw();
+            @map.draw(@camera);
 
             @hero.draw();
 

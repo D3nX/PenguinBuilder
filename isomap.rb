@@ -180,32 +180,42 @@ class IsoMap
         @draw_debug_tile = enable
     end
 
-    def draw
+    def draw(camera = nil)
+        cam = (camera) ? Omega::Vector2.new(camera.position.x, camera.position.y) : nil
+
+        tw, th = 27, 16
         x, y = 0, 0
 
         local_blocks = @blocks.clone
         local_blocks = local_blocks.reverse if (@rotation == 1 or @rotation == 2) and @rotation != 3
 
-        local_blocks.each do |cols|
+        local_blocks.each_with_index do |cols, ty|
             columns = cols
             columns = cols.reverse if @rotation == 2 or @rotation == 3
-            columns.each do |z_columns|
+            columns.each_with_index do |z_columns, tx|
                 base_z_offset = 0
                 for i in 0...z_columns.size
                     tile = z_columns[i]
-                    c = 0
-                    if @light
-                        if @rotation == 0 or @rotation == 2
-                            c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
-                        else
-                            c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
-                        end
-                    end
-                    c = c.clamp(0, 255)
+
                     fx = x + @position.x
                     fy = y + @position.y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
-                    if tile.id >= 0 and tile.id < @tileset.size
+                    is_in_offset = (camera) ? 
+                                (fx > -cam.x - TILE_WIDTH and fy > -cam.y - (TILE_WIDTH - Z_OFFSET) * 2 and fx < -cam.x + tw * TILE_WIDTH and fy < -cam.y + th * (TILE_HEIGHT - Z_OFFSET)) :
+                                nil
+                    if tile.id >= 0 and tile.id < @tileset.size and (!camera or is_in_offset)
+                        # Calculate light
+                        c = 0
+                        if @light
+                            if @rotation == 0 or @rotation == 2
+                                c = Omega::distance3d(@light, Omega::Vector3.new(x, y, base_z_offset / Z_OFFSET)) / @light.power
+                            else
+                                c = Omega::distance3d(@light, Omega::Vector3.new(y, x, base_z_offset / Z_OFFSET)) / @light.power
+                            end
+                        end
+                        c = c.clamp(0, 255)
+
+                        # Draw
                         screen_y = fy - base_z_offset * tile.offset_scale - i * @margin
                         @tileset[tile.id].draw(fx, screen_y, screen_y + i * 100, 1, 1,
                                                 Gosu::Color.new(@color.alpha, @color.red - c, @color.green - c, @color.blue - c))
@@ -355,6 +365,14 @@ class IsoMap
 
         #     end
         # end
+    end
+
+    def pixel_width
+        return @width * TILE_WIDTH
+    end
+
+    def pixel_height
+        return @height * (TILE_HEIGHT - Z_OFFSET)
     end
 
     private
