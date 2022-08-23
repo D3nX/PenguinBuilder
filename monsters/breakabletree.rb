@@ -2,7 +2,7 @@ class BreakableTree < Monster
 
     def initialize(hero, camera)
         super(hero, camera, "assets/tree.png", 38, 62, 50, 0)
-        set_loot(6,["Wood"], 90)
+        set_loot(9,["Wood"], 90)
 
         # Every monsters have to possess a HIT and DIE animation
         add_animation("IDLE", [0]);

@@ -1,7 +1,7 @@
 class Volcanicdood < Monster
 
-    SPEED = 0.22
-    DISTANCE_DETECTION = 100
+    SPEED = 0.3
+    DISTANCE_DETECTION = 150
     MUSIC_DISTANCE_DETECTION = 160
     HUD_THICKNESS = 4;
 
