@@ -1,7 +1,7 @@
 class ConstructionState < Omega::State
 
     def load_map
-        @isomap = IsoMap.new("assets/ctileset.png", 27, 27)
+        @isomap = IsoMap.new("assets/ctileset.png", 40, 40)
 
         quest_nb = 3
 
@@ -53,6 +53,7 @@ class ConstructionState < Omega::State
             @substate = nil
             @@initialized = true
         end
+        $musics["construction_mode"].play(true)
     end
 
     def update
@@ -88,6 +89,8 @@ class ConstructionState < Omega::State
             @substate.draw
             return
         end
+
+        Gosu.draw_rect(0, 0, Omega.width, Omega.height, Gosu::Color.new(10, 100, 255), 0)
 
         @camera.draw() do
             @isomap.draw

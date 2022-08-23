@@ -58,18 +58,20 @@ class Game < Omega::RenderWindow
         "select" => Gosu::Sample.new("assets/sounds/select.wav"),
         "throw_brick" => Gosu::Sample.new("assets/sounds/throw_brick.wav"),
         "validate" => Gosu::Sample.new("assets/sounds/validate.wav"),
+        "put_block" => Gosu::Sample.new("assets/sounds/put_block.wav"),
+        "remove_block" => Gosu::Sample.new("assets/sounds/remove_block.wav")
     }
 
     $inventory = {
-        "Grass" => 100,
-        "Stone" => 3,
-        "Sand" => 0,
-        "Water" => 0,
-        "Wood" => 2,
-        "Glass" => 0,
-        "Dirt" => 0,
-        "Cactus" => 0,
-        "Bush" => 0
+        "Grass" => 1000,
+        "Stone" => 1000,
+        "Sand" => 1000,
+        "Water" => 1000,
+        "Wood" => 1000,
+        "Glass" => 1000,
+        "Dirt" => 1000,
+        "Cactus" => 1000,
+        "Bush" => 1000
     }
 
     $hero_inventory = {
@@ -89,9 +91,9 @@ class Game < Omega::RenderWindow
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
         "House" => {"available" => false, "done" => false},
-        "Bigger House" => {"available" => false, "done" => false},
         "Simple Garden" => {"available" => false, "done" => false},
         "Cult place" => {"available" => false, "done" => false},
+        "Bigger House" => {"available" => false, "done" => false},
     }
 
     $quest = 1
