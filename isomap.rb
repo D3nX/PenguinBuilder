@@ -24,6 +24,10 @@ class IsoMap
         EAST    = 3
     end
 
+    NO_BORDERS = [
+        Block::GLASS, Block::BUSH
+    ]
+
     BlockNames = [
         "Grass",
         "Stone",
@@ -60,6 +64,8 @@ class IsoMap
     attr_accessor :position, :rotation, :light, :margin, :color
 
     def initialize(tileset_path, width, height)
+        @@border_tileset ||= Gosu::Image.load_tiles("assets/tile_borders.png", TILE_WIDTH, TILE_WIDTH, :tileable => true)
+        @@border_front_tileset ||= Gosu::Image.load_tiles("assets/tile_front.png", TILE_WIDTH, Z_OFFSET, :tileable => true)
         @tileset = Gosu::Image.load_tiles(tileset_path, TILE_WIDTH, TILE_HEIGHT, :tileable => true)
         @width = width
         @height = height
@@ -103,9 +109,13 @@ class IsoMap
         end
     end
 
-    def tile_at(x, y, z = -1)
-        if y < @blocks.size and x < @blocks[y].size and z < @blocks[y][x].size
-            return @blocks[y][x][z]
+    def tile_at(x, y, z = nil)
+        if x >= 0 and y >= 0 and y < @blocks.size and x < @blocks[y].size
+            pile = pile_at(x, y)
+            z = pile - 1 if pile and not z
+            if pile and z >= 0 and z < pile.size
+                return pile[z]
+            end
         end
         return nil
     end
@@ -113,7 +123,8 @@ class IsoMap
     def push_block(x, y, id, offset_scale = 0)
         if @blocks[y][x].size < Z_OFFSET
             z = @blocks[y][x].size
-            @blocks[y][x] << IsoTile.new(id, offset_scale, z, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
+            
+            @blocks[y][x] << IsoTile.new(id, z, offset_scale, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
             return true
         else
             puts("Cannot put any more blocks!")
@@ -199,10 +210,11 @@ class IsoMap
                         @tileset[tile.id].draw(fx, screen_y, screen_y + i * 100, 1, 1,
                                                 Gosu::Color.new(@color.alpha, @color.red - c, @color.green - c, @color.blue - c))
                         if @draw_debug_tile
-                            tile.rect.z = 10000
+                            tile.rect.z = screen_y + i * 100 + 10000
                             tile.rect.color.alpha = 128
                             tile.rect.draw
                         end
+                        draw_border(tile, x / TILE_WIDTH, y / (TILE_HEIGHT - Z_OFFSET), fx, screen_y, screen_y + i * 100)
                         tile.offset_scale -= (tile.offset_scale - 1.0) * 0.1
                     end
                     base_z_offset += Z_OFFSET
@@ -212,6 +224,57 @@ class IsoMap
             x = 0
             y += TILE_HEIGHT - Z_OFFSET
         end
+    end
+
+    def draw_border(tile, x, y, draw_x, draw_y, draw_z)
+        return if NO_BORDERS.include?(tile.id)
+
+        if @rotation == 1 or @rotation == 3
+            x, y = y, x
+        end
+
+        someone_above = tile_at(x, y, tile.z + 1)
+        someone_under = (tile_at(x, y, tile.z - 1) != nil) && (tile_at(x, y + 1, tile.z - 1) == nil)
+
+
+        is_right        = tile_at(x + 1, y, tile.z)
+        is_right        = false if is_right and NO_BORDERS.include?(is_right.id)
+
+        is_left         = tile_at(x - 1, y, tile.z)
+        is_left         = false if is_left and NO_BORDERS.include?(is_left.id)
+
+        is_up           = tile_at(x, y - 1, tile.z)
+        is_up           = false if is_up and NO_BORDERS.include?(is_up.id)
+
+        is_down         = tile_at(x, y + 1, tile.z)
+        is_down         = false if is_down and NO_BORDERS.include?(is_down.id)
+
+        if not someone_above
+            if not is_right
+                @@border_tileset[0].draw(draw_x, draw_y, draw_z)
+            end
+
+            if not is_left
+                @@border_tileset[1].draw(draw_x, draw_y, draw_z)
+            end
+            
+            if not is_down
+                @@border_tileset[2].draw(draw_x, draw_y, draw_z)
+                draw_front(draw_x, draw_y, draw_z, is_left, is_right, someone_under)
+            end
+
+            if not is_up
+                @@border_tileset[3].draw(draw_x, draw_y, draw_z)
+            end
+        else
+            draw_front(draw_x, draw_y, draw_z, is_left, is_right, someone_under)
+        end
+    end
+
+    def draw_front(draw_x, draw_y, draw_z, is_left, is_right, someone_under)
+        @@border_front_tileset[0].draw(draw_x, draw_y + TILE_HEIGHT - Z_OFFSET, draw_z) if not someone_under
+        @@border_front_tileset[1].draw(draw_x, draw_y + TILE_HEIGHT - Z_OFFSET, draw_z) if not is_left
+        @@border_front_tileset[2].draw(draw_x, draw_y + TILE_HEIGHT - Z_OFFSET, draw_z) if not is_right
     end
 
     def get_ressource_list

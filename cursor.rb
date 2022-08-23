@@ -7,8 +7,6 @@ class Cursor < Omega::Sprite
     def initialize(isomap, camera, notification)
         super("assets/cursor.png")
 
-        @push = Gosu::Sample.new("assets/push.wav")
-        @pop = Gosu::Sample.new("assets/pop.wav")
         @isomap = isomap
         @camera = camera
         @notification = notification
@@ -112,7 +110,7 @@ class Cursor < Omega::Sprite
 
             if (place_invisible_block or $inventory[IsoMap::BlockNames[@block_id]] > 0) and @isomap.push_block(tpos.x, tpos.y, block)
                 if not place_invisible_block
-                    @push.play()
+                    $sounds["put_block"].play()
                     $inventory[IsoMap::BlockNames[@block_id]] -= 1
                 end
             end
@@ -124,7 +122,7 @@ class Cursor < Omega::Sprite
 
             popped = @isomap.pop_block(tpos.x, tpos.y, erase_invisible_block)
             if popped and !erase_invisible_block
-                @pop.play()
+                $sounds["remove_block"].play()
                 $inventory[IsoMap::BlockNames[popped.id]] += 1
             end
         end
@@ -132,6 +130,7 @@ class Cursor < Omega::Sprite
         if Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_W)
             @block_id += (Omega::just_pressed(Gosu::KB_W)) ? 1 : -1
             @block_id %= IsoMap::BlockNames.size
+            $sounds["select"].play()
         end
 
         @isomap.light = nil
