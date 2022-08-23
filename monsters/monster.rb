@@ -6,16 +6,21 @@ class Monster < Omega::SpriteSheet
 
     UI_Z = 100_000
 
-    attr_reader :death_animation_is_finished
+    HUD_THICKNESS = 4;
+
+    attr_reader :death_animation_is_finished, :name, :can_draw_hud
 
     def initialize(hero, camera, path, width, height, hp, damage)
         super(path,width,height)
+        @name = "";
+
         @hero = hero;
         @camera = camera;
         @hp_max = hp.clone;
 
         @hitbox = Omega::Rectangle.new(0,0,1,1);
         @hitbox_offset = Omega::Rectangle.new(0,0,0,0);
+        @can_draw_hitbox = true;
 
         @has_collide = false;
         @alpha = 255;
@@ -37,6 +42,9 @@ class Monster < Omega::SpriteSheet
         @list_text_damage = []
 
         @alpha = 255;
+
+        @is_invincible = false;
+        @can_draw_hud = false;
     end
 
     def update()
@@ -57,7 +65,6 @@ class Monster < Omega::SpriteSheet
             @list_items[i].update() 
             @list_items.delete_at(i) if (@list_items[i].is_collected)
         end
-
     end
 
     def draw()
@@ -68,6 +75,8 @@ class Monster < Omega::SpriteSheet
         for i in 0...@list_items.length do
             @list_items[i].draw();
         end
+
+        @can_draw_hitbox = !@can_draw_hitbox if (Omega::just_pressed(Gosu::KB_H))
     end
 
     def update_velocity()
@@ -117,6 +126,8 @@ class Monster < Omega::SpriteSheet
 
     def receive_damage(damage) 
         return if (@is_dead || !@can_take_damage)
+
+        damage = 0 if (@is_invincible)
 
         @hp -= damage;
 
@@ -207,6 +218,17 @@ class Monster < Omega::SpriteSheet
                 loot = nil;
             end
         end
+    end
+
+    def draw_life()
+        pos_x = Omega.width*0.2
+        pos_y = Omega.height*0.9
+        width = Omega.width*0.6
+        height = 26;
+
+        Gosu.draw_rect(pos_x - HUD_THICKNESS, pos_y - HUD_THICKNESS, width + (2*HUD_THICKNESS), height + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255), UI_Z)
+        Gosu.draw_rect(pos_x, pos_y, (@hp * width)/@hp_max, height, Gosu::Color.new(255, 255, 0,0), UI_Z);
+        $font.draw_text(@name.to_s, pos_x + 12, pos_y + height*0.5 - 14, UI_Z+10, 0.6, 0.6, Gosu::Color::BLACK);
     end
 
 end

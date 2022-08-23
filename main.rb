@@ -20,11 +20,14 @@ require_relative "notification"
 require_relative "monsters/monster"
 require_relative "monsters/loot"
 require_relative "monsters/rockdood"
+require_relative "monsters/volcanicdood"
 require_relative "monsters/smokey"
+require_relative "monsters/whitesmokey"
 require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
 require_relative "monsters/breakablecactus"
 require_relative "monsters/breakablebush"
+require_relative "monsters/breakableHammer"
 
 require_relative "constructionstate"
 
@@ -36,7 +39,9 @@ class Game < Omega::RenderWindow
     $font = Gosu::Font.new(50, name: "assets/Perfect_DOS_VGA.ttf")
 
     $musics = {
+        "boss" => Gosu::Song.new("assets/musics/boss.ogg"),
         "castle" => Gosu::Song.new("assets/musics/chaos_penguin_castle_ruins.ogg"),
+        "chaos_penguin" => Gosu::Song.new("assets/musics/#@[°=%.ogg"),
         "construction_mode" => Gosu::Song.new("assets/musics/construction_mode.ogg"),
         "desert" => Gosu::Song.new("assets/musics/desert.ogg"),
         "forest" => Gosu::Song.new("assets/musics/forest.ogg"),
@@ -51,6 +56,7 @@ class Game < Omega::RenderWindow
     $sounds = {
         "attack_pickaxe" => Gosu::Sample.new("assets/sounds/attack_pickaxe.wav"),
         "cancel" => Gosu::Sample.new("assets/sounds/cancel.wav"),
+        "empty" => Gosu::Sample.new("assets/sounds/empty.wav"),
         "hit_hero" => Gosu::Sample.new("assets/sounds/hit_hero.wav"),
         "hit_monster" =>  Gosu::Sample.new("assets/sounds/hit_monster.wav"),
         "item_collected" => Gosu::Sample.new("assets/sounds/item_collected.wav"),
@@ -86,7 +92,7 @@ class Game < Omega::RenderWindow
         "Bush" => 0
     }
 
-    $current_map = "forest" # possible choices are: "forest" || "desert" || "castle"
+    $current_map = "desert" # possible choices are: "forest" || "desert" || "castle"
 
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
@@ -121,7 +127,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(ConstructionState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end

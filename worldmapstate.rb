@@ -27,11 +27,14 @@ class WorldMapState < Omega::State
         if Omega::just_pressed(Gosu::KB_RIGHT)
             @current_place += 1
             @current_place %= @places_point.size
+            $sounds["select"].play();
         elsif Omega::just_pressed(Gosu::KB_LEFT)
             @current_place -= 1
             @current_place %= @places_point.size
+            $sounds["select"].play();
         elsif Omega::just_pressed(Gosu::KB_RETURN)
             if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
+                $sounds["validate"].play();
                 if not Omega.is_transition?
                     transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
                         if @current_place == 2

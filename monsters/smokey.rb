@@ -5,7 +5,7 @@ class Smokey < Monster
     SPEED = 0.8;
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/smokey.png", 30, 30, 51, 9)
+        super(hero, camera, "assets/white_smokey.png", 30, 30, 51, 9)
         set_loot(6,["Water", "Dirt", "Mana"], 75)
 
         # Every monsters have to possess a HIT and DIE animation
@@ -21,6 +21,8 @@ class Smokey < Monster
 
         @timer_direction = TIMER_DIRECTION;
         @timer_wait = TIMER_WAIT;
+
+        @hitbox_offset = Omega::Rectangle.new(5,8,-10,-14);
     end
 
     def update()

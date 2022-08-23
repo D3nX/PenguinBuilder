@@ -232,21 +232,34 @@ class Hero < Omega::SpriteSheet
         end
 
         # Pickaxe
-        if (@energy >= ENERGY_COST && Omega::just_pressed(Gosu::KB_X)) then
-            @is_attacking = true;
-            $sounds["attack_pickaxe"].play();
-            @energy -= ENERGY_COST;
-            @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
-            @energy = 0 if (@energy <= 0) 
+        if (Omega::just_pressed(Gosu::KB_X)) then
+
+            if (@energy >= ENERGY_COST) then
+                @is_attacking = true;
+                $sounds["attack_pickaxe"].play();
+                @energy -= ENERGY_COST;
+                @timer_wait_before_refill_energy = TIMER_WAIT_BEFORE_REFILL_ENERGY;
+                @energy = 0 if (@energy <= 0) 
+                
+                define_position_pickaxe();
+            else
+                $sounds["empty"].play();
+            end
+
             
-            define_position_pickaxe();
         end
 
         # Bricks
-        if (@mp >= MP_COST && Omega::just_pressed(Gosu::KB_C)) then
-            @mp -= MP_COST;
-            @mp = 0 if (@mp <= 0)
-            @list_bricks.push(Brick.new(self));
+        if (Omega::just_pressed(Gosu::KB_C)) then
+
+            if (@mp >= MP_COST) then
+                @mp -= MP_COST;
+                @mp = 0 if (@mp <= 0)
+                @list_bricks.push(Brick.new(self));
+            else
+                $sounds["empty"].play();
+            end
+            
         end
 
     end
