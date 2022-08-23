@@ -180,15 +180,27 @@ class IsoMap
         @draw_debug_tile = enable
     end
 
-    def draw
-        x, y = 0, 0
+    def draw(camera)
+        cam = Omega::Vector2.new(-camera.position.x, -camera.position.y)
+        cam.x, cam.y = cam.y - pixel_width(), cam.x - pixel_height() if @rotation == 2
+        tx, ty = (cam.x / TILE_WIDTH).to_i, (cam.y / (TILE_HEIGHT - Z_OFFSET)).to_i
+        tw, th = 26, 21
+
+        # puts "#{tx}, #{ty}"
+
+        tx = tx.clamp(0, @width - 1)
+        ty = ty.clamp(0, @height - 1)
+
+        x, y = tx * TILE_WIDTH, ty * (TILE_HEIGHT - Z_OFFSET)
 
         local_blocks = @blocks.clone
         local_blocks = local_blocks.reverse if (@rotation == 1 or @rotation == 2) and @rotation != 3
+        local_blocks = local_blocks[ty..(ty + th)]
 
         local_blocks.each do |cols|
             columns = cols
             columns = cols.reverse if @rotation == 2 or @rotation == 3
+            columns = cols[tx..(tx + tw)]
             columns.each do |z_columns|
                 base_z_offset = 0
                 for i in 0...z_columns.size
@@ -221,7 +233,7 @@ class IsoMap
                 end
                 x += TILE_WIDTH
             end
-            x = 0
+            x = tx * TILE_WIDTH
             y += TILE_HEIGHT - Z_OFFSET
         end
     end
@@ -355,6 +367,14 @@ class IsoMap
 
         #     end
         # end
+    end
+
+    def pixel_width
+        return @width * TILE_WIDTH
+    end
+
+    def pixel_height
+        return @height * (TILE_HEIGHT - Z_OFFSET)
     end
 
     private
