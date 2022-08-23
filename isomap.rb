@@ -180,10 +180,10 @@ class IsoMap
         @draw_debug_tile = enable
     end
 
-    def draw(camera)
-        cam = Omega::Vector2.new(camera.position.x, camera.position.y)
+    def draw(camera = nil)
+        cam = (camera) ? Omega::Vector2.new(camera.position.x, camera.position.y) : nil
 
-        tw, th = 27, 15
+        tw, th = 27, 16
         x, y = 0, 0
 
         local_blocks = @blocks.clone
@@ -200,8 +200,10 @@ class IsoMap
                     fx = x + @position.x
                     fy = y + @position.y
                     fx, fy = fy, fx if @rotation == 1 or @rotation == 3
-                    is_in_offset = (fx > -cam.x - TILE_WIDTH and fy > -cam.y - (TILE_WIDTH - Z_OFFSET) * 2 and fx < -cam.x + tw * TILE_WIDTH and fy < -cam.y + th * (TILE_HEIGHT - Z_OFFSET))
-                    if tile.id >= 0 and tile.id < @tileset.size and is_in_offset
+                    is_in_offset = (camera) ? 
+                                (fx > -cam.x - TILE_WIDTH and fy > -cam.y - (TILE_WIDTH - Z_OFFSET) * 2 and fx < -cam.x + tw * TILE_WIDTH and fy < -cam.y + th * (TILE_HEIGHT - Z_OFFSET)) :
+                                nil
+                    if tile.id >= 0 and tile.id < @tileset.size and (!camera or is_in_offset)
                         # Calculate light
                         c = 0
                         if @light

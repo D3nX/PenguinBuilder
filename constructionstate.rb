@@ -54,7 +54,7 @@ class ConstructionState < Omega::State
             @@initialized = true
         end
 
-        # $musics["construction_mode"].play(true)
+        $musics["construction_mode"].play(true)
     end
 
     def update
