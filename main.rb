@@ -71,15 +71,15 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 1000,
-        "Stone" => 1000,
-        "Sand" => 1000,
-        "Water" => 1000,
-        "Wood" => 1000,
-        "Glass" => 1000,
-        "Dirt" => 1000,
-        "Cactus" => 1000,
-        "Bush" => 1000
+        "Grass" => 2,
+        "Stone" => 0,
+        "Sand" => 0,
+        "Water" => 0,
+        "Wood" => 1,
+        "Glass" => 0,
+        "Dirt" => 0,
+        "Cactus" => 0,
+        "Bush" => 0
     }
 
     $hero_inventory = {
@@ -99,8 +99,8 @@ class Game < Omega::RenderWindow
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
         "House" => {"available" => false, "done" => false},
-        "Simple Garden" => {"available" => false, "done" => false},
         "Cult place" => {"available" => false, "done" => false},
+        "Simple Garden" => {"available" => false, "done" => false},
         "Bigger House" => {"available" => false, "done" => false},
     }
 
