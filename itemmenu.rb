@@ -24,7 +24,6 @@ class ItemMenu
                 @itembox.z = UI_Z + 100
                 @itembox.set_scale(1.0, 1.1)
                 @itembox.color = Omega::Color::copy((quantity <= 0) ? Omega::Color::RED : Omega::Color::WHITE)
-
                 @itembox.draw
 
                 @itembox.z = 0
@@ -34,6 +33,9 @@ class ItemMenu
                 @itembox.x = x
                 @itembox.y = Omega.height - @itembox.height - 5
                 @itembox.z = UI_Z
+                @itembox.color = Omega::Color::copy(Omega::Color::WHITE)
+                @itembox.color = Omega::Color::copy(Omega::Color::GRAY) if $inventory[IsoMap::BlockNames[i]] == 0
+
                 @itembox.draw
             end
 
@@ -43,7 +45,6 @@ class ItemMenu
                                             @itembox.y + (@itembox.height_scaled - image.height * scale) / 2)
             image.draw(icon_pos.x, icon_pos.y, UI_Z + 100, scale, scale, (quantity <= 0) ? Gosu::Color.new(90,90,90,90) : Gosu::Color::WHITE)
             Omega::DefaultFont.draw_text("#{quantity}", x + 5, @itembox.y + 2, UI_Z + 100, 0.2, 0.2, (quantity <= 0) ? Gosu::Color::YELLOW : Gosu::Color::WHITE)
-
             x += @size
         end
     end

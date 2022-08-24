@@ -23,6 +23,11 @@ class ConstructionState < Omega::State
         #         end
         #     end
         # end
+
+        @mini_worldmap = Omega::Sprite.new("assets/mini_worldmap.png")
+        @mini_worldmap.x = 5
+        @mini_worldmap.y = Omega.height - @mini_worldmap.height - 5
+        @mini_worldmap.z = 100_000
     end
 
     def load_camera
@@ -32,7 +37,7 @@ class ConstructionState < Omega::State
 
     def load_cursor
         @notification = Notification.new()
-        @notification.launch(["Hi, just a little tip:", "If the quest doesn't ask you grass tiles as a base,", "feel free to dig them!"], 150)
+        @notification.launch(["Hi, just a little tip:", "If the quest doesn't ask you grass tiles as a base,", "feel free to dig it!"], 150)
         
         @cursor = Cursor.new(@isomap, @camera, @notification)
         @camera.follow(@cursor, 0.5)
@@ -58,15 +63,19 @@ class ConstructionState < Omega::State
     end
 
     def update
+        $rotation = @isomap.rotation
+        
         if @substate
             @substate.update
             @substate = nil if @substate.finished
             return
         end
 
-        if Omega::just_pressed(Gosu::KB_P) and not Omega.is_transition?
+        if Omega::just_pressed(Gosu::KB_O) and not Omega.is_transition?
             $construction_state = self
             transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
+                @sound.stop if @sound
+                @sound = nil
                 Omega.set_state(WorldMapState.new)
             end
             transition.z = 100_000
@@ -108,7 +117,7 @@ class ConstructionState < Omega::State
         @text.set_scale(0.6)
         @text.text = "Orientation: #{IsoMap::RotationString[@isomap.rotation]}"
         @text.x = (Omega.width - @text.width - 290)
-        @text.y = (Omega.height - 125)
+        @text.y = (Omega.height - 160)
         @text.z = 1000
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.draw
@@ -122,7 +131,7 @@ class ConstructionState < Omega::State
         @text.set_scale(0.6)
         @text.text = "Item: #{@cursor.get_item_name}"
         @text.x = 290
-        @text.y = (Omega.height - 125)
+        @text.y = (Omega.height - 160)
         @text.z = 1000
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.draw
@@ -132,14 +141,36 @@ class ConstructionState < Omega::State
         @text.color = Omega::Color::copy(Omega::Color::WHITE)
         @text.draw
 
+        # Item ids
+        x = 0
+        for i in 1..9
+            @text.set_scale(0.6)
+            @text.text = i.to_s
+            @text.x = 325 + x
+            @text.y = (Omega.height - 120)
+            @text.z = 1000
+            @text.color = Omega::Color::copy(Omega::Color::BLACK)
+            @text.draw
+
+            @text.x -= 2
+            @text.y -= 2
+            @text.color = Omega::Color::copy(Omega::Color::WHITE)
+            @text.draw
+
+            x += 78
+        end
+
+        # Drawing controls
         draw_controls()
 
         @notification.draw
     end
 
     def draw_controls
-        @text.scale = Omega::Vector2.new(0.35, 0.35)
-        @text.text = "Controls:\nQ / W: Next / previous item\nX / C: Place / Erase\nB / N: Rise / Lower cursor\nArrow keys: Move\nEnter / Backspace: Rotate\nESC: Check quests\nP: Go to world map"
+        @mini_worldmap.draw()
+
+        @text.scale = Omega::Vector2.new(0.39, 0.39)
+        @text.text = "Controls:\n1...9: Change item\nQ / Space: Place\nE: Erase\nEnter / Backspace: Rotate\nESC: Check quests"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.color = Omega::Color::copy(Omega::Color::BLACK)

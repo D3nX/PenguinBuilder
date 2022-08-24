@@ -72,13 +72,13 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 2000,
-        "Stone" => 1000,
+        "Grass" => 0,
+        "Stone" => 3,
         "Sand" => 0,
-        "Water" => 500,
-        "Wood" => 1,
+        "Water" => 0,
+        "Wood" => 0,
         "Glass" => 0,
-        "Dirt" => 0,
+        "Dirt" => 3,
         "Cactus" => 0,
         "Bush" => 0
     }
@@ -102,7 +102,7 @@ class Game < Omega::RenderWindow
         "House" => {"available" => false, "done" => false},
         "Cult place" => {"available" => false, "done" => false},
         "Simple Garden" => {"available" => false, "done" => false},
-        "Bigger House" => {"available" => false, "done" => false},
+        "Pyramid" => {"available" => true, "done" => false},
     }
 
     $quest = 1
@@ -110,6 +110,8 @@ class Game < Omega::RenderWindow
     $quests_maps = []
 
     $construction_state = nil
+
+    $rotation = 0
 
     def load_quests_map
         dir_size = Dir.entries("./assets/maps/quests")[2..-1].size
