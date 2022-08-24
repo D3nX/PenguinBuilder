@@ -62,6 +62,7 @@ class Game < Omega::RenderWindow
         "hit_monster" =>  Gosu::Sample.new("assets/sounds/hit_monster.wav"),
         "item_collected" => Gosu::Sample.new("assets/sounds/item_collected.wav"),
         "monster_die" => Gosu::Sample.new("assets/sounds/monster_die.wav"),
+        "move_cursor" => Gosu::Sample.new("assets/sounds/move_cursor.wav"),
         "put_block" => Gosu::Sample.new("assets/sounds/put_block.wav"),
         "quest_finished" => Gosu::Sample.new("assets/sounds/quest_finished.wav"),
         "remove_block" => Gosu::Sample.new("assets/sounds/remove_block.wav"),
@@ -83,7 +84,7 @@ class Game < Omega::RenderWindow
     }
 
     $hero_inventory = {
-        "Grass" => 100,
+        "Grass" => 0,
         "Stone" => 0,
         "Sand" =>  0,
         "Water" => 0,
@@ -129,7 +130,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(BackToVillageState.new)
+        Omega.set_state(CutScene.new)
     end
    
 end

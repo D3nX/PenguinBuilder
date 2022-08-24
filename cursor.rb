@@ -180,6 +180,8 @@ class Cursor < Omega::Sprite
             tpos.x < map_width and tpos.y < map_height
             set_tile_position(tpos)
         end
+
+        $sounds["move_cursor"].play(1.0,rand(1.0..1.5));
     end
 
     def get_item_name
