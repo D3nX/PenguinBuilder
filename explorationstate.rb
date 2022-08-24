@@ -11,12 +11,12 @@ class ExplorationState < Omega::State
         @text = Omega::Text.new("", $font)
 
         $musics[$current_map].play(true)
+        $musics[$current_map].volume = 1.0
 
         @map = IsoMap.new("assets/ctileset.png",48,20);
         @map.load_csv_layer("assets/maps/" + $current_map + "_layer_0.csv");
         @map.load_csv_layer("assets/maps/" + $current_map +"_layer_1.csv");
         @map.load_csv_layer("assets/maps/" + $current_map +"_layer_2.csv");
-        @map.light = nil;
 
         @list_monsters = [];
 
@@ -33,12 +33,14 @@ class ExplorationState < Omega::State
         end
 
         if Omega::just_pressed(Gosu::KB_ESCAPE)
+            $sounds["validate"].play();
             @substate = QuestState.new
             @substate.load(true, true)
             return
         end
 
        @hero.update();
+       @map.light = ($current_map == "castle") ? IsoMap::Light.new(@hero.position.x, @hero.position.y, 0, 0.6) : nil;
 
        for i in 0...@list_monsters.length do
             next if (@list_monsters[i] == nil)
@@ -48,7 +50,10 @@ class ExplorationState < Omega::State
        end
 
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
-       Omega.set_state(BackToVillageState.new) if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0)
+       if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0) then
+            Omega.set_state((@hero.is_inventory_empty) ? WorldMapState.new : BackToVillageState.new)
+       end
+
 
        update_collision_with_map();
     end
@@ -61,26 +66,20 @@ class ExplorationState < Omega::State
         
         @camera.draw(Omega.width / @camera.scale.x, Omega.height / @camera.scale.y,
                         (@map.width + 13) * IsoMap::TILE_WIDTH, (@map.height + 8) * IsoMap::TILE_WIDTH) do
-            @map.draw();
+            @map.draw(@camera);
 
             @hero.draw();
 
-            for i in 0...@list_monsters.length do
-                @list_monsters[i].draw();
-
-                if (@list_monsters[i].can_draw_hud) then
-                    @list_monsters[i].draw_life();
-                end
-           end
+            for i in 0...@list_monsters.length do @list_monsters[i].draw() end
         end
 
+         # Interfaces :
         for i in 0...@list_monsters.length do
             if (@list_monsters[i].can_draw_hud) then
                 @list_monsters[i].draw_life();
             end
         end
 
-        # Interfaces :
         @hero.draw_hud();
         draw_controls()
     end
@@ -98,6 +97,7 @@ class ExplorationState < Omega::State
         map_entities.set_type(16, "rock")
         map_entities.set_type(17, "volcanicdood")
         map_entities.set_type(18, "whitesmokey")
+        map_entities.set_type(5, "window")
         map_entities.set_type(19, "hammer")
 
         map_entities.layers["entities"].each do |t|
@@ -134,13 +134,18 @@ class ExplorationState < Omega::State
                 rock.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(rock)
                 rock = nil;
+            elsif t.type == "window"
+                window = BreakableWindow.new(@hero, @camera)
+                window.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
+                @list_monsters.push(window)
+                window = nil;
             elsif t.type == "volcanicdood"
                 volcanicdood = Volcanicdood.new(@hero, @camera)
                 volcanicdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(volcanicdood)
                 volcanicdood = nil;
             elsif t.type == "whitesmokey"
-                white_smokey = WhiteSmokey.new(@hero, @camera)
+                white_smokey = WhiteSmokey.new(@hero, @camera, @map)
                 white_smokey.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(white_smokey)
                 white_smokey = nil;

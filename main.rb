@@ -27,6 +27,7 @@ require_relative "monsters/breakablerock"
 require_relative "monsters/breakabletree"
 require_relative "monsters/breakablecactus"
 require_relative "monsters/breakablebush"
+require_relative "monsters/breakablewindow"
 require_relative "monsters/breakableHammer"
 
 require_relative "constructionstate"
@@ -61,17 +62,21 @@ class Game < Omega::RenderWindow
         "hit_monster" =>  Gosu::Sample.new("assets/sounds/hit_monster.wav"),
         "item_collected" => Gosu::Sample.new("assets/sounds/item_collected.wav"),
         "monster_die" => Gosu::Sample.new("assets/sounds/monster_die.wav"),
+        "move_cursor" => Gosu::Sample.new("assets/sounds/move_cursor.wav"),
+        "put_block" => Gosu::Sample.new("assets/sounds/put_block.wav"),
+        "quest_finished" => Gosu::Sample.new("assets/sounds/quest_finished.wav"),
+        "remove_block" => Gosu::Sample.new("assets/sounds/remove_block.wav"),
         "select" => Gosu::Sample.new("assets/sounds/select.wav"),
         "throw_brick" => Gosu::Sample.new("assets/sounds/throw_brick.wav"),
         "validate" => Gosu::Sample.new("assets/sounds/validate.wav"),
     }
 
     $inventory = {
-        "Grass" => 5,
-        "Stone" => 3,
+        "Grass" => 2,
+        "Stone" => 0,
         "Sand" => 0,
         "Water" => 0,
-        "Wood" => 2,
+        "Wood" => 1,
         "Glass" => 0,
         "Dirt" => 0,
         "Cactus" => 0,
@@ -95,9 +100,9 @@ class Game < Omega::RenderWindow
     $quest_status = {
         "Fountain" => {"available" => true, "done" => false},
         "House" => {"available" => false, "done" => false},
-        "Bigger House" => {"available" => false, "done" => false},
-        "Simple Garden" => {"available" => false, "done" => false},
         "Cult place" => {"available" => false, "done" => false},
+        "Simple Garden" => {"available" => false, "done" => false},
+        "Bigger House" => {"available" => false, "done" => false},
     }
 
     $quest = 1

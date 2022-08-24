@@ -1,8 +1,8 @@
-class BreakableBush < Monster
+class BreakableWindow < Monster
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/bush.png", 28, 14, 32, 0)
-        set_loot(13,["Dirt", "Bush"], 90)
+        super(hero, camera, "assets/window.png", 32, 16, 41, 0)
+        set_loot(4,["Glass"], 90)
 
         # Every monsters have to possess a HIT and DIE animation
         add_animation("IDLE", [0]);

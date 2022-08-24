@@ -1,16 +1,17 @@
 class WhiteSmokey < Monster
 
-    TIMER_DIRECTION = 0.1;
-    TIMER_WAIT = 0.5;
-    SPEED = 1.5;
+    TIMER_DIRECTION = 0.05;
+    TIMER_WAIT = 0.4;
+    SPEED = 8;
 
     MUSIC_DISTANCE_DETECTION = 160
 
-    def initialize(hero, camera)
-        super(hero, camera, "assets/smokey.png", 30, 30, 410, 11)
+    def initialize(hero, camera, map)
+        super(hero, camera, "assets/smokey.png", 30, 30, 640, 11)
         set_loot(36,["Water", "Sand", "Mana"], 75)
 
         @name = "Dark Smokey"
+        @map = map;
 
         @base_scale = Omega::Vector2.new(2.5,2.5);
         @scale = @base_scale.clone;
@@ -39,7 +40,7 @@ class WhiteSmokey < Monster
 
         @timer_direction -= 0.01
 
-         if (!@can_take_damage || @hp <= 0) then
+        if (!@can_take_damage || @hp <= 0 || Omega.distance(@hero.position, @position) > 300) then
             @velocity.x = @velocity.y = 0;
             return
         end
@@ -55,6 +56,8 @@ class WhiteSmokey < Monster
                 @timer_wait = TIMER_WAIT;
             end
         end
+
+        update_collision_with_map();
 
     end
 
@@ -81,7 +84,7 @@ class WhiteSmokey < Monster
 
     def update_music_detection()
         @can_draw_hud = @boss_music_is_launch;
-        
+
         if (!@boss_music_is_launch && Omega.distance(@hero.position, @position) <= MUSIC_DISTANCE_DETECTION) then
 
             $musics[$current_map].volume -= 0.02;
@@ -107,6 +110,59 @@ class WhiteSmokey < Monster
             $musics["boss"].volume += 0.2
             $musics["boss"].volume = 1.0 if ($musics["boss"].volume >= 1.0)
         end
+    end
+
+    def update_collision_with_map()
+        solid_tiles = [3]; # add here other solid tiles that need collision on **LAYER 0**
+        tile_size = IsoMap::TILE_WIDTH;
+
+        for z in 0..1 do
+            # Collision top
+            tile1 = @map.tile_at((@hitbox.x+2)/tile_size, (@hitbox.y-2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x+@hitbox.width-2)/tile_size, (@hitbox.y-2)/tile_size, z)
+
+            if @velocity.y < 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.y = 0; 
+            end 
+
+            # Collision right
+            tile1 = @map.tile_at((@hitbox.x + @hitbox.width + 2)/tile_size, (@hitbox.y + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x + @hitbox.width + 2)/tile_size, (@hitbox.y + @hitbox.height - 2)/tile_size, z)
+
+            if @velocity.x > 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.x = 0; 
+            end 
+
+            # Collision left
+            tile1 = @map.tile_at((@hitbox.x - 2)/tile_size, (@hitbox.y + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x - 2)/tile_size, (@hitbox.y + @hitbox.height - 2)/tile_size, z)
+
+            if @velocity.x < 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.x = 0; 
+            end 
+
+            # Collision bottom
+            tile1 = @map.tile_at((@hitbox.x + 2)/tile_size, (@hitbox.y + @hitbox.height + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x+@hitbox.width-2)/tile_size, (@hitbox.y + @hitbox.height + 2)/tile_size, z)
+
+            if @velocity.y > 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.y = 0; 
+            end 
+            
+        end
+    end
+
+    def check_if_tile_is_solid(list_solid_tiles, tile_to_check)
+        for i in 0...list_solid_tiles.length do
+            if (tile_to_check == list_solid_tiles[i]) then
+                return true;
+            end
+        end
+        return false;
+    end
+
+    def check_collision(tile1, tile2, z, solid_tiles)
+        return (tile1 != nil && check_if_tile_is_solid(solid_tiles, tile1.id)) || (tile2 != nil && check_if_tile_is_solid(solid_tiles, tile2.id)) || ((z != 0 && tile1 != nil) || (z != 0 && tile2 != nil))
     end
 
 end

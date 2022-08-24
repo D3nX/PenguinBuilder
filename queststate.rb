@@ -44,16 +44,19 @@ class QuestState < Omega::State
             @c_quest += 1
             @c_quest %= ($quests_maps.size + 1)
             @c_quest = 1 if @c_quest == 0
+            $sounds["select"].play()
             load(false)
             return
         elsif Omega::just_pressed(Gosu::KB_LEFT)
             @c_quest -= 1
             @c_quest %= $quests_maps.size
             @c_quest = $quests_maps.size if @c_quest == 0
+            $sounds["select"].play()
             load(false)
             return
         elsif Omega::just_pressed(Gosu::KB_ESCAPE)
             @finished = true
+            $sounds["cancel"].play()
         end
 
         if Omega::pressed(Gosu::KB_DOWN)
@@ -152,6 +155,7 @@ class QuestState < Omega::State
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.x = (Omega.width - @text.width) / 2
         @text.y = Omega.height - @text.height - 50
+        @text.z = 100_000
         @text.draw
 
         @text.x += 2
@@ -165,6 +169,7 @@ class QuestState < Omega::State
         @text.text = "Controls:\nRight / Left: Change quest\nUp / Down: Move layers\nESC: Go back"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
+        @text.z -= 1000
         @text.color = Omega::Color::copy(Omega::Color::BLACK)
         @text.draw
 

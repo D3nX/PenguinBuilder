@@ -20,7 +20,7 @@ class Hero < Omega::SpriteSheet
     UI_Z = 100_000;
     
 
-    attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources
+    attr_reader :hitbox, :hitbox_pickaxe, :attack, :hp, :hp_max, :mp, :mp_max, :is_attacking, :list_bricks, :bag_resources, :is_inventory_empty
     attr_accessor :velocity;
 
     def initialize(cam)
@@ -34,6 +34,7 @@ class Hero < Omega::SpriteSheet
         play_animation("top");
 
         @camera = cam;
+        @is_inventory_empty = true;
         
         @hitbox = Omega::Rectangle.new(0,0,1,1);
         @velocity = Omega::Vector2.new(0,0);
@@ -69,8 +70,11 @@ class Hero < Omega::SpriteSheet
         update_energy();
         update_z_order();
 
-        for i in 0...list_bricks.length do
-            list_bricks[i].update();
+        for i in 0...@list_bricks.length do
+            next if (@list_bricks[i] == nil)
+            
+            @list_bricks[i].update();
+            @list_bricks.delete_at(i) if (Omega.distance(@list_bricks[i].position, @position) > 200)
         end
         
     end
@@ -105,6 +109,7 @@ class Hero < Omega::SpriteSheet
             @list_loot_info.push(loot_info)
             loot_info = nil;
             @icon_bag.scale = Omega::Vector2.new(DEFAULT_BAG_SCALE + 2, DEFAULT_BAG_SCALE + 2);
+            @is_inventory_empty = false;
         end
     end
 
@@ -197,8 +202,6 @@ class Hero < Omega::SpriteSheet
         @hitbox.position.y = @position.y-(@height*@scale.y*@origin.y) +15
         @hitbox.width = @width*@scale.x - 4;
         @hitbox.height = @height*@scale.y - 15;
-
-        @can_draw_hitbox = !@can_draw_hitbox if Omega::just_pressed(Gosu::KB_P) #TODO To Remove
     end
 
     def update_damage()

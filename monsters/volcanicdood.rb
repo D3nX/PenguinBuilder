@@ -1,12 +1,12 @@
 class Volcanicdood < Monster
 
-    SPEED = 0.22
-    DISTANCE_DETECTION = 100
+    SPEED = 0.3
+    DISTANCE_DETECTION = 150
     MUSIC_DISTANCE_DETECTION = 160
     HUD_THICKNESS = 4;
 
     def initialize(hero, camera)
-        super(hero, camera, "assets/volcanicdood.png", 30, 40, 660, 17)
+        super(hero, camera, "assets/volcanicdood.png", 30, 40, 817, 17)
         set_loot(30,["Glass", "Stone", "Mana"], 75)
 
         @name = "Volcanic Dood";
