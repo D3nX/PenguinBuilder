@@ -72,10 +72,10 @@ class Game < Omega::RenderWindow
     }
 
     $inventory = {
-        "Grass" => 2,
-        "Stone" => 0,
+        "Grass" => 2000,
+        "Stone" => 1000,
         "Sand" => 0,
-        "Water" => 0,
+        "Water" => 500,
         "Wood" => 1,
         "Glass" => 0,
         "Dirt" => 0,
@@ -130,7 +130,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(WorldMapState.new)
+        Omega.set_state(ConstructionState.new)
     end
    
 end

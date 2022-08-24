@@ -235,7 +235,7 @@ class Hero < Omega::SpriteSheet
         end
 
         # Pickaxe
-        if (Omega::just_pressed(Gosu::KB_X) || Omega::just_pressed(Gosu::KB_E) || Omega::just_pressed(Gosu::MS_LEFT) ) then
+        if (Omega::just_pressed(Gosu::KB_X) || Omega::just_pressed(Gosu::KB_E) ) then
 
             if (@energy >= ENERGY_COST) then
                 @is_attacking = true;
@@ -251,7 +251,7 @@ class Hero < Omega::SpriteSheet
         end
 
         # Bricks
-        if (Omega::just_pressed(Gosu::KB_C) || Omega::just_pressed(Gosu::KB_Q) || Omega::just_pressed(Gosu::MS_RIGHT)) then
+        if (Omega::just_pressed(Gosu::KB_C) || Omega::just_pressed(Gosu::KB_R)) then
 
             if (@mp >= MP_COST) then
                 @mp -= MP_COST;
