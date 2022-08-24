@@ -73,12 +73,12 @@ class Game < Omega::RenderWindow
 
     $inventory = {
         "Grass" => 0,
-        "Stone" => 0,
+        "Stone" => 3,
         "Sand" => 0,
         "Water" => 0,
-        "Wood" => 1,
+        "Wood" => 0,
         "Glass" => 0,
-        "Dirt" => 0,
+        "Dirt" => 3,
         "Cactus" => 0,
         "Bush" => 0
     }

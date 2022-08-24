@@ -44,6 +44,10 @@ class Cursor < Omega::Sprite
                 else
                     # puts "but not match yet..."
                 end
+
+            else
+                $sounds["empty"].play();
+                @camera.shake(16,-0.6,0.6);
             end
         end
 
