@@ -5,8 +5,8 @@ class Volcanicdood < Monster
     MUSIC_DISTANCE_DETECTION = 160
     HUD_THICKNESS = 4;
 
-    def initialize(hero, camera)
-        super(hero, camera, "assets/volcanicdood.png", 30, 40, 817, 17)
+    def initialize(hero, camera, map)
+        super(hero, camera, map, "assets/volcanicdood.png", 30, 40, 817, 17)
         set_loot(30,["Glass", "Stone", "Mana"], 75)
 
         @name = "Volcanic Dood";
@@ -30,10 +30,10 @@ class Volcanicdood < Monster
     end
 
     def update()
+        super()
+        
         if (@hp < 0) then @velocity.x = @velocity.y = 0; end
         update_music_detection();
-
-        super()
 
         # Update only if rockdood is near the hero
         if (!@can_take_damage || Omega.distance(@hero.position, @position) > DISTANCE_DETECTION) then
@@ -61,7 +61,7 @@ class Volcanicdood < Monster
             @velocity.x = SPEED;
         end
 
-        
+        update_collision_with_map();
     end
 
     def draw()

@@ -4,8 +4,8 @@ class Smokey < Monster
     TIMER_WAIT = 0.5;
     SPEED = 0.8;
 
-    def initialize(hero, camera)
-        super(hero, camera, "assets/white_smokey.png", 30, 30, 51, 9)
+    def initialize(hero, camera, map)
+        super(hero, camera, map, "assets/white_smokey.png", 30, 30, 51, 9)
         set_loot(6,["Water", "Dirt", "Mana"], 75)
 
         # Every monsters have to possess a HIT and DIE animation
@@ -47,6 +47,7 @@ class Smokey < Monster
             end
         end
 
+         update_collision_with_map();
     end
 
     def draw()
