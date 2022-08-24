@@ -220,22 +220,22 @@ class Hero < Omega::SpriteSheet
 
         # Movements 
         @velocity.x = @velocity.y = 0;
-        if Omega::pressed(Gosu::KB_RIGHT) then
+        if Omega::pressed(Gosu::KB_RIGHT) || Omega::pressed(Gosu::KB_D) then
             @velocity.x = SPEED;
             play_animation("right") if @current_animation != "right" and @velocity.y == 0;
-        elsif Omega::pressed(Gosu::KB_LEFT) then
+        elsif Omega::pressed(Gosu::KB_LEFT) || Omega::pressed(Gosu::KB_A) then
             @velocity.x = -SPEED;
             play_animation("left") if @current_animation != "left" and @velocity.y == 0;
-        elsif Omega::pressed(Gosu::KB_UP) then
+        elsif Omega::pressed(Gosu::KB_UP) || Omega::pressed(Gosu::KB_W) then
             @velocity.y = -SPEED;
             play_animation("top") if @current_animation != "top";
-        elsif Omega::pressed(Gosu::KB_DOWN) then
+        elsif Omega::pressed(Gosu::KB_DOWN) || Omega::pressed(Gosu::KB_S) then
             @velocity.y = SPEED;
             play_animation("down") if @current_animation != "down";
         end
 
         # Pickaxe
-        if (Omega::just_pressed(Gosu::KB_X)) then
+        if (Omega::just_pressed(Gosu::KB_X) || Omega::just_pressed(Gosu::KB_E) || Omega::just_pressed(Gosu::MS_LEFT) ) then
 
             if (@energy >= ENERGY_COST) then
                 @is_attacking = true;
@@ -248,12 +248,10 @@ class Hero < Omega::SpriteSheet
             else
                 $sounds["empty"].play();
             end
-
-            
         end
 
         # Bricks
-        if (Omega::just_pressed(Gosu::KB_C)) then
+        if (Omega::just_pressed(Gosu::KB_C) || Omega::just_pressed(Gosu::KB_Q) || Omega::just_pressed(Gosu::MS_RIGHT)) then
 
             if (@mp >= MP_COST) then
                 @mp -= MP_COST;
