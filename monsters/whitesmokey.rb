@@ -57,6 +57,8 @@ class WhiteSmokey < Monster
             end
         end
 
+        update_collision_with_map();
+
     end
 
     def draw()

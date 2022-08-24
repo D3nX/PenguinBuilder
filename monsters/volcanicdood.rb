@@ -61,7 +61,7 @@ class Volcanicdood < Monster
             @velocity.x = SPEED;
         end
 
-        
+        update_collision_with_map();
     end
 
     def draw()
