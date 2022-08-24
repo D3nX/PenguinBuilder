@@ -127,7 +127,7 @@ class IsoMap
             @blocks[y][x] << IsoTile.new(id, z, offset_scale, Omega::Rectangle.new(x * TILE_WIDTH, y * TILE_WIDTH - z * Z_OFFSET, TILE_WIDTH, TILE_WIDTH))
             return true
         else
-            puts("Cannot put any more blocks!")
+            # puts("Cannot put any more blocks!")
         end
         return false
     end
@@ -141,7 +141,7 @@ class IsoMap
             end
             return block
         else
-            puts("No block left!")
+            # puts("No block left!")
         end
         return nil
     end
@@ -159,6 +159,8 @@ class IsoMap
         end
 
         return 0
+    rescue
+        return nil
     end
 
     def pile_at(x, y)
@@ -173,6 +175,8 @@ class IsoMap
             return @blocks[x][@width - y - 1]
         end
 
+        return nil
+    rescue
         return nil
     end
 
