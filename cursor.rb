@@ -13,10 +13,11 @@ class Cursor < Omega::Sprite
         @block_id = 0
         @tile_position = Omega::Vector2.new(0, 0)
         @offset = 0
+        @sound = nil
     end
 
     def check_ressources
-        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_C)
+        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_E)
             if @isomap.has_ressources?($quests_maps[$quest - 1])
                 # puts "has enough ressources"
                 if @isomap.has_construction?($quests_maps[$quest - 1])
@@ -33,8 +34,10 @@ class Cursor < Omega::Sprite
                             $sounds["quest_finished"].play()
                             @notification.launch(["Quest accomplished!", "You are now stronger", "Press ESCAPE to check for the next quest!"])
                         else
+                            @sound = $sounds["quest_finished"].play()
                             @notification.launch(["Quest accomplished!",
                                                     "Congratulation, you finished all the quests.",
+                                                    "Thank you very much for playing!",
                                                     "Feel free to build anything from now on!"])
                         end
                     end
@@ -43,13 +46,15 @@ class Cursor < Omega::Sprite
                 end
             end
         end
+
+        $musics["victory"].play(true) if @sound and not @sound.playing?
     end
 
     def update
-        move(1, 0) if Omega::just_pressed(Gosu::KB_RIGHT)
-        move(-1, 0) if Omega::just_pressed(Gosu::KB_LEFT)
-        move(0, 1) if Omega::just_pressed(Gosu::KB_DOWN)
-        move(0, -1) if Omega::just_pressed(Gosu::KB_UP)
+        move(1, 0) if Omega::just_pressed(Gosu::KB_D) or Omega::just_pressed(Gosu::KB_RIGHT)
+        move(-1, 0) if Omega::just_pressed(Gosu::KB_A) or Omega::just_pressed(Gosu::KB_LEFT)
+        move(0, 1) if Omega::just_pressed(Gosu::KB_S) or Omega::just_pressed(Gosu::KB_DOWN)
+        move(0, -1) if Omega::just_pressed(Gosu::KB_W) or Omega::just_pressed(Gosu::KB_UP)
 
         pressed_enter = Omega::just_pressed(Gosu::KB_RETURN)
         pressed_backspace = Omega::just_pressed(Gosu::KB_BACKSPACE)
@@ -98,9 +103,9 @@ class Cursor < Omega::Sprite
             @camera.follow(self, 1.0)
         end
 
-        place_invisible_block = Omega::just_pressed(Gosu::KB_B)
-        erase_invisible_block = Omega::just_pressed(Gosu::KB_N)
-        if Omega::just_pressed(Gosu::KB_X) or place_invisible_block
+        place_invisible_block = false # Omega::just_pressed(Gosu::KB_B)
+        erase_invisible_block = false # Omega::just_pressed(Gosu::KB_N)
+        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_Q) or place_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
@@ -115,7 +120,7 @@ class Cursor < Omega::Sprite
                     $inventory[IsoMap::BlockNames[@block_id]] -= 1
                 end
             end
-        elsif Omega::just_pressed(Gosu::KB_C) or erase_invisible_block
+        elsif Omega::just_pressed(Gosu::KB_E) or erase_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
@@ -128,10 +133,19 @@ class Cursor < Omega::Sprite
             end
         end
 
-        if Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_W)
-            @block_id += (Omega::just_pressed(Gosu::KB_W)) ? 1 : -1
-            @block_id %= IsoMap::BlockNames.size
-            $sounds["select"].play()
+        # if Omega::just_pressed(Gosu::KB_LEFT) or Omega::just_pressed(Gosu::KB_RIGHT)
+        #     @block_id += (Omega::just_pressed(Gosu::KB_RIGHT)) ? 1 : -1
+        #     @block_id %= IsoMap::BlockNames.size
+        #     $sounds["select"].play()
+        # end
+
+
+        for i in 1..9
+            if eval("Omega::just_pressed(Gosu::KB_#{i})")
+                $sounds["select"].play()
+                @block_id = i - 1
+                break
+            end
         end
 
         @isomap.light = nil

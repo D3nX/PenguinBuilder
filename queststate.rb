@@ -71,13 +71,19 @@ class QuestState < Omega::State
 
         @camera.draw do
             scale = @camera.scale.x
-            center_map_x = (Omega.width / scale - @isomap.width * IsoMap::TILE_WIDTH) / 2
+            is_on_side = ($rotation == 1 or $rotation == 3) ? 1 : 0
+            center_map_x = (Omega.width / scale - ((is_on_side == 1) ? @isomap.height : @isomap.width) * IsoMap::TILE_WIDTH) / 2
+            
+            @isomap.rotation = $rotation
 
-            @isomap.position = Omega::Vector3.new(center_map_x - 400 / scale, 450 / scale, 0)
+            add_x = is_on_side * (@isomap.pixel_height + 40)
+            add_y = -is_on_side * (@isomap.pixel_width + 45)
+
+            @isomap.position = Omega::Vector3.new(center_map_x - 400 / scale + add_x, 450 / scale + add_y, 0)
             @isomap.margin = @margin / scale
             @isomap.draw
 
-            @isomap.position = Omega::Vector3.new(center_map_x, 280 / scale, 0)
+            @isomap.position = Omega::Vector3.new(center_map_x + add_y + is_on_side * 15, 280 / scale + add_x - is_on_side * 25, 0)
             @isomap.margin = 0
             @isomap.draw
         end
@@ -93,11 +99,12 @@ class QuestState < Omega::State
 
         materials = 0
 
+        i = 0
         @ressources.each do |k, v|
-            if v > 0
-                exploration_inventory = (@is_hero) ? " (+#{$hero_inventory[k]})" : ""
+            if v > 0 and k != "Grass"
+                exploration_inventory = (@is_hero) ? $hero_inventory[k] : 0
                 materials += 1
-                @text.text = "#{(@available) ? k : "???"}: #{(@available) ? "#{$inventory[k]}" + exploration_inventory : "???"} / #{(@available) ? v : "???"}"
+                @text.text = "#{(@available) ? k : "???"}: #{(@available) ? "#{$inventory[k] + exploration_inventory}" : "???"} / #{(@available) ? v : "???"}"
                 @text.x = x
                 @text.y = y
                 @text.color = Omega::Color::copy(Omega::Color::BLACK)
@@ -109,7 +116,13 @@ class QuestState < Omega::State
                 @text.draw
             
                 y += @text.height + 5
+                i += 1
             end
+        end
+
+        if i == 2
+            y -= (@text.height + 5) * 2
+            @text.y = y
         end
 
         # Quest Status
