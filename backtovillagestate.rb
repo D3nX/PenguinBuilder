@@ -23,6 +23,8 @@ class BackToVillageState < Omega::State
         @alpha_flash = 255;
         @quantity_item = 0;
 
+        @speed_multiplier = 1;
+
         transfer_to_main_inventory();
 
         $musics["return_to_village"].play(false)
@@ -31,6 +33,10 @@ class BackToVillageState < Omega::State
     def update
         update_alpha_flash();
         return if (@alpha_flash > 0)
+
+
+        @speed_multiplier = 1;
+        @speed_multiplier = 5 if (Omega.pressed(Gosu::KB_X) || Omega.pressed(Gosu::KB_ENTER))
 
         if (!@can_fade) then
             update_timer();
@@ -90,12 +96,11 @@ class BackToVillageState < Omega::State
 
     def spawn_icon(resource)
         icon = LootIcon.new(resource);
-        icon.velocity.x = -ICON_SPEED;
+        icon.velocity.x = -ICON_SPEED*@speed_multiplier;
         icon.origin = @hero.origin;
         icon.scale = Omega::Vector2.new(HERO_BASE_SCALE-1,HERO_BASE_SCALE-1);
         icon.position = @hero.position.clone;
-        $sounds["validate"].play();
-
+        $sounds["validate"].play(0.2,rand(1.2..1.5));
         @list_icons.push(icon)
         @quantity_item += 1;
         @text.text = "Resources obtained: " + @quantity_item.to_s;
@@ -139,7 +144,7 @@ class BackToVillageState < Omega::State
     end
 
     def update_timer()
-        @timer_add_loot -= 0.01
+        @timer_add_loot -= (0.01 * @speed_multiplier)
 
         if (@timer_add_loot < 0) then
             current_resource = @list_keys[@current_key_index]

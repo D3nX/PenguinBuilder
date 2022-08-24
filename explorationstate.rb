@@ -50,7 +50,10 @@ class ExplorationState < Omega::State
        end
 
        Omega.set_state(GameOverState.new) if (@hero.hp <= 0)
-       Omega.set_state(BackToVillageState.new) if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0)
+       if (@hero.position.x >= @map.width * IsoMap::TILE_WIDTH || @hero.position.x <= 0 || @hero.position.y >= @map.height * IsoMap::TILE_WIDTH || @hero.position.y <= 0) then
+            Omega.set_state((@hero.is_inventory_empty) ? WorldMapState.new : BackToVillageState.new)
+       end
+
 
        update_collision_with_map();
     end
