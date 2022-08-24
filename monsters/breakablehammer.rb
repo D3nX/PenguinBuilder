@@ -2,8 +2,8 @@ class BreakableHammer < Monster
 
     DISTANCE_DETECTION = 140
 
-    def initialize(hero, camera)
-        super(hero, camera, "assets/chaos_penguin_hammer.png", 32, 56, 1, 1)
+    def initialize(hero, camera, map)
+        super(hero, camera, map, "assets/chaos_penguin_hammer.png", 32, 56, 1, 1)
         set_loot(1,["???"], 0)
 
         @name = "???"

@@ -3,8 +3,8 @@ class Rockdood < Monster
     SPEED = 0.4
     DISTANCE_DETECTION = 130
 
-    def initialize(hero, camera)
-        super(hero, camera, "assets/rockdood.png", 30, 40, 78, 12)
+    def initialize(hero, camera, map)
+        super(hero, camera, map, "assets/rockdood.png", 30, 40, 78, 12)
         set_loot(5,["Grass", "Stone", "Mana"], 75)
 
         # Every monsters have to possess a HIT and DIE animation
@@ -22,9 +22,9 @@ class Rockdood < Monster
     end
 
     def update()
-        if (@hp < 0) then @velocity.x = @velocity.y = 0; end
-
         super()
+
+        if (@hp < 0) then @velocity.x = @velocity.y = 0; end
 
         # Update only if rockdood is near the hero
         if (!@can_take_damage || Omega.distance(@hero.position, @position) > DISTANCE_DETECTION) then
@@ -51,8 +51,8 @@ class Rockdood < Monster
             play_animation("RIGHT") if (@current_animation != "RIGHT" && @velocity.y == 0)
             @velocity.x = SPEED;
         end
-        
-        #puts "velocity x : " + @velocity.x.to_s + " | " + @velocity.y.to_s
+
+        update_collision_with_map();
     end
 
     def draw()

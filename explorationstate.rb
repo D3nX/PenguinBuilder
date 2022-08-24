@@ -105,42 +105,42 @@ class ExplorationState < Omega::State
                 @hero.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @camera.follow(@hero, 0.4)
             elsif t.type == "rockdood"
-                rockdood = Rockdood.new(@hero, @camera)
+                rockdood = Rockdood.new(@hero, @camera, @map)
                 rockdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(rockdood)
                 rockdood = nil;
             elsif t.type == "smokey"
-                smokey = Smokey.new(@hero, @camera)
+                smokey = Smokey.new(@hero, @camera, @map)
                 smokey.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(smokey)
                 smokey = nil;
             elsif t.type == "bush"
-                bush = BreakableBush.new(@hero, @camera)
+                bush = BreakableBush.new(@hero, @camera, @map)
                 bush.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(bush)
                 bush = nil;
             elsif t.type == "cactus"
-                cactus = BreakableCactus.new(@hero, @camera)
+                cactus = BreakableCactus.new(@hero, @camera, @map)
                 cactus.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(cactus)
                 cactus = nil;
             elsif t.type == "tree"
-                tree = BreakableTree.new(@hero, @camera)
+                tree = BreakableTree.new(@hero, @camera, @map)
                 tree.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(tree)
                 tree = nil;
             elsif t.type == "rock"
-                rock = BreakableRock.new(@hero, @camera)
+                rock = BreakableRock.new(@hero, @camera, @map)
                 rock.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(rock)
                 rock = nil;
             elsif t.type == "window"
-                window = BreakableWindow.new(@hero, @camera)
+                window = BreakableWindow.new(@hero, @camera, @map)
                 window.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(window)
                 window = nil;
             elsif t.type == "volcanicdood"
-                volcanicdood = Volcanicdood.new(@hero, @camera)
+                volcanicdood = Volcanicdood.new(@hero, @camera, @map)
                 volcanicdood.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(volcanicdood)
                 volcanicdood = nil;
@@ -150,7 +150,7 @@ class ExplorationState < Omega::State
                 @list_monsters.push(white_smokey)
                 white_smokey = nil;
             elsif t.type == "hammer"
-                hammer = BreakableHammer.new(@hero, @camera)
+                hammer = BreakableHammer.new(@hero, @camera, @map)
                 hammer.position = Omega::Vector3.new(t.position.x, t.position.y, 0);
                 @list_monsters.push(hammer)
                 hammer = nil;

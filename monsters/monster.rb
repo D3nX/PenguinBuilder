@@ -10,13 +10,15 @@ class Monster < Omega::SpriteSheet
 
     attr_reader :death_animation_is_finished, :name, :can_draw_hud
 
-    def initialize(hero, camera, path, width, height, hp, damage)
+    def initialize(hero, camera, map, path, width, height, hp, damage)
         super(path,width,height)
         @name = "";
 
         @hero = hero;
         @camera = camera;
         @hp_max = hp.clone;
+
+        @map = map;
 
         @hitbox = Omega::Rectangle.new(0,0,1,1);
         @hitbox_offset = Omega::Rectangle.new(0,0,0,0);
@@ -58,6 +60,8 @@ class Monster < Omega::SpriteSheet
         update_text_damage() if (@list_text_damage.length > 0)
 
         update_death() if (@is_dead && !@death_animation_is_finished)
+
+        
 
         for i in 0...@list_items.length do
             next if (@list_items[i] == nil) 
@@ -227,6 +231,61 @@ class Monster < Omega::SpriteSheet
         Gosu.draw_rect(pos_x - HUD_THICKNESS, pos_y - HUD_THICKNESS, width + (2*HUD_THICKNESS), height + (2*HUD_THICKNESS), Gosu::Color.new(255,255,255,255), UI_Z)
         Gosu.draw_rect(pos_x, pos_y, (@hp * width)/@hp_max, height, Gosu::Color.new(255, 255, 0,0), UI_Z);
         $font.draw_text(@name.to_s, pos_x + 12, pos_y + height*0.5 - 14, UI_Z+10, 0.6, 0.6, Gosu::Color::BLACK);
+    end
+
+
+    # From here, it's all about collision detection with terrain.
+    def update_collision_with_map()
+        solid_tiles = [3]; # add here other solid tiles that need collision on **LAYER 0**
+        tile_size = IsoMap::TILE_WIDTH;
+
+        for z in 0..1 do
+            # Collision top
+            tile1 = @map.tile_at((@hitbox.x+2)/tile_size, (@hitbox.y-2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x+@hitbox.width-2)/tile_size, (@hitbox.y-2)/tile_size, z)
+
+            if @velocity.y < 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.y = 0; 
+            end 
+
+            # Collision right
+            tile1 = @map.tile_at((@hitbox.x + @hitbox.width + 2)/tile_size, (@hitbox.y + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x + @hitbox.width + 2)/tile_size, (@hitbox.y + @hitbox.height - 2)/tile_size, z)
+
+            if @velocity.x > 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.x = 0; 
+            end 
+
+            # Collision left
+            tile1 = @map.tile_at((@hitbox.x - 2)/tile_size, (@hitbox.y + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x - 2)/tile_size, (@hitbox.y + @hitbox.height - 2)/tile_size, z)
+
+            if @velocity.x < 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.x = 0; 
+            end 
+
+            # Collision bottom
+            tile1 = @map.tile_at((@hitbox.x + 2)/tile_size, (@hitbox.y + @hitbox.height + 2)/tile_size, z)
+            tile2 = @map.tile_at((@hitbox.x+@hitbox.width-2)/tile_size, (@hitbox.y + @hitbox.height + 2)/tile_size, z)
+
+            if @velocity.y > 0 && check_collision(tile1, tile2, z, solid_tiles) then 
+                @velocity.y = 0; 
+            end 
+            
+        end
+    end
+
+    def check_if_tile_is_solid(list_solid_tiles, tile_to_check)
+        for i in 0...list_solid_tiles.length do
+            if (tile_to_check == list_solid_tiles[i]) then
+                return true;
+            end
+        end
+        return false;
+    end
+
+    def check_collision(tile1, tile2, z, solid_tiles)
+        return (tile1 != nil && check_if_tile_is_solid(solid_tiles, tile1.id)) || (tile2 != nil && check_if_tile_is_solid(solid_tiles, tile2.id)) || ((z != 0 && tile1 != nil) || (z != 0 && tile2 != nil))
     end
 
 end
