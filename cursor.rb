@@ -18,9 +18,9 @@ class Cursor < Omega::Sprite
     def check_ressources
         if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_C)
             if @isomap.has_ressources?($quests_maps[$quest - 1])
-                puts "has enough ressources"
+                # puts "has enough ressources"
                 if @isomap.has_construction?($quests_maps[$quest - 1])
-                    puts "and it match!"
+                    # puts "and it match!"
                     name = $quest_status.keys()[$quest - 1]
                     if not $quest_status[name]["done"]
                         $quest_status[name]["done"] = true
@@ -30,7 +30,8 @@ class Cursor < Omega::Sprite
             
                             name = $quest_status.keys()[$quest - 1]
                             $quest_status[name]["available"] = true
-                            @notification.launch(["Quest accomplished!", "Press ESCAPE to check for the next quest!"])
+                            $sounds["quest_finished"].play()
+                            @notification.launch(["Quest accomplished!", "You are now stronger", "Press ESCAPE to check for the next quest!"])
                         else
                             @notification.launch(["Quest accomplished!",
                                                     "Congratulation, you finished all the quests.",
@@ -38,7 +39,7 @@ class Cursor < Omega::Sprite
                         end
                     end
                 else
-                    puts "but not match yet..."
+                    # puts "but not match yet..."
                 end
             end
         end

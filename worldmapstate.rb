@@ -32,23 +32,21 @@ class WorldMapState < Omega::State
             @current_place -= 1
             @current_place %= @places_point.size
             $sounds["select"].play();
-        elsif Omega::just_pressed(Gosu::KB_RETURN)
-            if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
-                $sounds["validate"].play();
-                if not Omega.is_transition?
-                    transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
-                        if @current_place == 2
-                            Omega.set_state($construction_state)
-                        else
-                            $current_map = "desert" if @current_place == 0
-                            $current_map = "castle" if @current_place == 1
-                            $current_map = "forest" if @current_place == 3
-                            Omega.set_state(ExplorationState.new)
-                        end
+        elsif Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
+            $sounds["validate"].play();
+            if not Omega.is_transition?
+                transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
+                    if @current_place == 2
+                        Omega.set_state($construction_state)
+                    else
+                        $current_map = "desert" if @current_place == 0
+                        $current_map = "castle" if @current_place == 1
+                        $current_map = "forest" if @current_place == 3
+                        Omega.set_state(ExplorationState.new)
                     end
-                    Omega.launch_transition(transition)
-                    return
                 end
+                Omega.launch_transition(transition)
+                return
             end
         end
     end
