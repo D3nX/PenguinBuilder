@@ -83,7 +83,7 @@ class Game < Omega::RenderWindow
     }
 
     $hero_inventory = {
-        "Grass" => 0,
+        "Grass" => 100,
         "Stone" => 0,
         "Sand" =>  0,
         "Water" => 0,
@@ -129,7 +129,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(CutScene.new)
+        Omega.set_state(BackToVillageState.new)
     end
    
 end
