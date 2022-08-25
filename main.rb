@@ -102,7 +102,7 @@ class Game < Omega::RenderWindow
         "House" => {"available" => false, "done" => false},
         "Cult place" => {"available" => false, "done" => false},
         "Simple Garden" => {"available" => false, "done" => false},
-        "Pyramid" => {"available" => true, "done" => false},
+        "Pyramid" => {"available" => false, "done" => false},
     }
 
     $quest = 1

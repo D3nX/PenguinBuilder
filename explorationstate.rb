@@ -213,7 +213,7 @@ class ExplorationState < Omega::State
 
     def draw_controls
         @text.scale.x = @text.scale.y = 0.31
-        @text.text = "Controls:\nE: Attack\nQ/A: Throw brick\nESC: Check quest"
+        @text.text = "Controls:\nE: Attack\nR: Throw brick\nESC: Check quest"
         @text.x = Omega.width - @text.width - 2
         @text.y = Omega.height - @text.height - 7
         @text.z = Hero::UI_Z;
