@@ -44,7 +44,7 @@ class ItemMenu
             icon_pos = Omega::Vector2.new(@itembox.x + (@itembox.width_scaled - image.width * scale) / 2,
                                             @itembox.y + (@itembox.height_scaled - image.height * scale) / 2)
             image.draw(icon_pos.x, icon_pos.y, UI_Z + 100, scale, scale, (quantity <= 0) ? Gosu::Color.new(90,90,90,90) : Gosu::Color::WHITE)
-            Omega::DefaultFont.draw_text("#{quantity}", x + 5, @itembox.y + 2, UI_Z + 100, 0.2, 0.2, (quantity <= 0) ? Gosu::Color::YELLOW : Gosu::Color::WHITE)
+            $font.draw_text("#{quantity}", x + 5, @itembox.y + 2, UI_Z + 100, 0.5, 0.5, (quantity <= 0) ? Gosu::Color::YELLOW : Gosu::Color::WHITE)
             x += @size
         end
     end

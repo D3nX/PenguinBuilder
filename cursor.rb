@@ -44,10 +44,6 @@ class Cursor < Omega::Sprite
                 else
                     # puts "but not match yet..."
                 end
-
-            else
-                $sounds["empty"].play();
-                @camera.shake(16,-0.6,0.6);
             end
         end
 
@@ -123,6 +119,9 @@ class Cursor < Omega::Sprite
                     $sounds["put_block"].play()
                     $inventory[IsoMap::BlockNames[@block_id]] -= 1
                 end
+            else
+                $sounds["empty"].play();
+                @camera.shake(16,-0.6,0.6);
             end
         elsif Omega::just_pressed(Gosu::KB_E) or erase_invisible_block
             tpos = @tile_position.clone
