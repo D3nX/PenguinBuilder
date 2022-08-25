@@ -17,7 +17,8 @@ class Cursor < Omega::Sprite
     end
 
     def check_ressources
-        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_E)
+        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_E) or
+            Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_C)
             if @isomap.has_ressources?($quests_maps[$quest - 1])
                 # puts "has enough ressources"
                 if @isomap.has_construction?($quests_maps[$quest - 1])

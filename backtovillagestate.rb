@@ -36,7 +36,7 @@ class BackToVillageState < Omega::State
 
 
         @speed_multiplier = 1;
-        @speed_multiplier = 5 if (Omega.pressed(Gosu::KB_X) || Omega.pressed(Gosu::KB_ENTER))
+        @speed_multiplier = 5 if (Omega::pressed(Gosu::KB_X) || Omega::pressed(Gosu::KB_RETURN) || Omega::pressed(Gosu::KB_SPACE))
 
         if (!@can_fade) then
             update_timer();
