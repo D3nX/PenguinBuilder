@@ -105,7 +105,7 @@ class Cursor < Omega::Sprite
 
         place_invisible_block = false # Omega::just_pressed(Gosu::KB_B)
         erase_invisible_block = false # Omega::just_pressed(Gosu::KB_N)
-        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_Q) or place_invisible_block
+        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_X) or place_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
@@ -123,7 +123,7 @@ class Cursor < Omega::Sprite
                 $sounds["empty"].play();
                 @camera.shake(16,-0.6,0.6);
             end
-        elsif Omega::just_pressed(Gosu::KB_E) or erase_invisible_block
+        elsif Omega::just_pressed(Gosu::KB_E) or Omega::just_pressed(Gosu::KB_C) or erase_invisible_block
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2

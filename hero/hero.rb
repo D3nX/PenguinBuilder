@@ -251,7 +251,7 @@ class Hero < Omega::SpriteSheet
         end
 
         # Bricks
-        if (Omega::just_pressed(Gosu::KB_C) || Omega::just_pressed(Gosu::KB_R)) then
+        if (Omega::just_pressed(Gosu::KB_C) || Omega::just_pressed(Gosu::KB_R) || Omega::just_pressed(Gosu::KB_SPACE)) then
 
             if (@mp >= MP_COST) then
                 @mp -= MP_COST;
