@@ -52,5 +52,5 @@ module Omega
     require_relative "./music_sample"
     require_relative "./transition"
     require_relative "./text"
-    require_relative "./3d/omega3d"
+    # require_relative "./3d/omega3d"
 end
