@@ -24,15 +24,15 @@ class WorldMapState < Omega::State
         @map_cursor.x -= (@map_cursor.x - @places_point[@current_place].x) * 0.1
         @map_cursor.y -= (@map_cursor.y - @places_point[@current_place].y) * 0.1
 
-        if Omega::just_pressed(Gosu::KB_RIGHT)
+        if Omega::just_pressed(Gosu::KB_RIGHT) || Omega::just_pressed(Gosu::GP_0_RIGHT)
             @current_place += 1
             @current_place %= @places_point.size
             $sounds["select"].play();
-        elsif Omega::just_pressed(Gosu::KB_LEFT)
+        elsif Omega::just_pressed(Gosu::KB_LEFT) || Omega::just_pressed(Gosu::GP_0_LEFT)
             @current_place -= 1
             @current_place %= @places_point.size
             $sounds["select"].play();
-        elsif Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
+        elsif Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN) or Omega::just_pressed(Gosu::GP_0_BUTTON_0)
             $sounds["validate"].play();
             if not Omega.is_transition?
                 transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do

@@ -32,7 +32,7 @@ class CutScene < Omega::State
     end
 
     def update
-        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN) then
+        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN) or Omega::just_pressed(Gosu::GP_0_BUTTON_0) then
             $sounds["validate"].play();
             @exit = true
         end

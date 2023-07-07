@@ -53,19 +53,19 @@ class Cursor < Omega::Sprite
     end
 
     def update
-        move(1, 0) if Omega::just_pressed(Gosu::KB_D) or Omega::just_pressed(Gosu::KB_RIGHT)
-        move(-1, 0) if Omega::just_pressed(Gosu::KB_A) or Omega::just_pressed(Gosu::KB_LEFT)
-        move(0, 1) if Omega::just_pressed(Gosu::KB_S) or Omega::just_pressed(Gosu::KB_DOWN)
-        move(0, -1) if Omega::just_pressed(Gosu::KB_W) or Omega::just_pressed(Gosu::KB_UP)
+        move(1, 0) if Omega::just_pressed(Gosu::KB_D) or Omega::just_pressed(Gosu::KB_RIGHT) or Omega::just_pressed(Gosu::GP_0_RIGHT)
+        move(-1, 0) if Omega::just_pressed(Gosu::KB_A) or Omega::just_pressed(Gosu::KB_LEFT) or Omega::just_pressed(Gosu::GP_0_LEFT)
+        move(0, 1) if Omega::just_pressed(Gosu::KB_S) or Omega::just_pressed(Gosu::KB_DOWN) or Omega::just_pressed(Gosu::GP_0_DOWN)
+        move(0, -1) if Omega::just_pressed(Gosu::KB_W) or Omega::just_pressed(Gosu::KB_UP) or Omega::just_pressed(Gosu::GP_0_UP)
 
-        pressed_enter = Omega::just_pressed(Gosu::KB_RETURN)
-        pressed_backspace = Omega::just_pressed(Gosu::KB_BACKSPACE)
+        pressed_enter = (Omega::just_pressed(Gosu::KB_RETURN) or Omega::just_pressed(303))
+        pressed_backspace = (Omega::just_pressed(Gosu::KB_BACKSPACE) or Omega::just_pressed(302))
 
         @offset = (@isomap.height_of(@tile_position.x, @tile_position.y) - IsoMap::Z_OFFSET)
 
         if pressed_enter or pressed_backspace
             last_rotation = @isomap.rotation
-            @isomap.rotation += (Omega::just_pressed(Gosu::KB_RETURN)) ? 1 : -1
+            @isomap.rotation += (Omega::just_pressed(Gosu::KB_RETURN) or Omega::just_pressed(303)) ? 1 : -1
             @isomap.rotation %= 4
 
             if @isomap.rotation == 0
@@ -107,7 +107,8 @@ class Cursor < Omega::Sprite
 
         place_invisible_block = false # Omega::just_pressed(Gosu::KB_B)
         erase_invisible_block = false # Omega::just_pressed(Gosu::KB_N)
-        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_X) or place_invisible_block
+        if Omega::just_pressed(Gosu::KB_SPACE) or Omega::just_pressed(Gosu::KB_Q) or Omega::just_pressed(Gosu::KB_X) or place_invisible_block or
+            Omega::just_pressed(Gosu::GP_0_BUTTON_0)
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
@@ -125,7 +126,7 @@ class Cursor < Omega::Sprite
                 $sounds["empty"].play();
                 @camera.shake(16,-0.6,0.6);
             end
-        elsif Omega::just_pressed(Gosu::KB_E) or Omega::just_pressed(Gosu::KB_C) or erase_invisible_block
+        elsif Omega::just_pressed(Gosu::KB_E) or Omega::just_pressed(Gosu::KB_C) or erase_invisible_block or Omega::just_pressed(Gosu::GP_0_BUTTON_1)
             tpos = @tile_position.clone
             tpos.x, tpos.y = tpos.y, @isomap.height - tpos.x - 1 if @isomap.rotation == 1
             tpos.x, tpos.y = @isomap.width - tpos.x - 1, @isomap.height - tpos.y - 1 if @isomap.rotation == 2
@@ -144,13 +145,18 @@ class Cursor < Omega::Sprite
         #     $sounds["select"].play()
         # end
 
-
         for i in 1..9
             if eval("Omega::just_pressed(Gosu::KB_#{i})")
                 $sounds["select"].play()
                 @block_id = i - 1
                 break
             end
+        end
+
+        if Omega::just_pressed(305)
+            @block_id = (@block_id + 1) % 9
+        elsif Omega::just_pressed(304)
+            @block_id = (@block_id - 1) % 9
         end
 
         @isomap.light = nil

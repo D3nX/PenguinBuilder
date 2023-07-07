@@ -11,7 +11,7 @@ class MenuState < Omega::State
     end
 
     def update
-        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN)
+        if Omega::just_pressed(Gosu::KB_X) or Omega::just_pressed(Gosu::KB_RETURN) or Omega::just_pressed(Gosu::GP_0_BUTTON_0)
             $sounds["validate"].play();
             if not Omega.is_transition?
                 transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do

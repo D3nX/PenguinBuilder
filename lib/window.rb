@@ -96,9 +96,7 @@ module Omega
             Omega.just_pressed_key = Gosu::GP_0_BUTTON_15 if id == Gosu::GP_0_BUTTON_15
 
             @joystick_captured = (last_pressed_key != Omega.just_pressed_key)
-
-            puts id
-
+            
             super(id)
             Omega.just_pressed_key = id if not @joystick_captured
             Omega.state.button_down(id) if Omega.state

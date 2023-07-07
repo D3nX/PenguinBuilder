@@ -71,7 +71,7 @@ class ConstructionState < Omega::State
             return
         end
 
-        if Omega::just_pressed(Gosu::KB_O) and not Omega.is_transition?
+        if (Omega::just_pressed(Gosu::KB_O) or Omega::just_pressed(297)) and not Omega.is_transition?
             $construction_state = self
             transition = Omega::FadeTransition.new(10, Omega::Color::copy(Omega::Color::BLACK)) do
                 @sound.stop if @sound
@@ -87,7 +87,7 @@ class ConstructionState < Omega::State
 
         @cursor.update
 
-        if Omega::just_pressed(Gosu::KB_ESCAPE)
+        if Omega::just_pressed(Gosu::KB_ESCAPE) or Omega::just_pressed(299)
             $sounds["validate"].play()
             @substate = QuestState.new
             @substate.load
