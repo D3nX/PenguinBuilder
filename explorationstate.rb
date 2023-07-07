@@ -32,7 +32,7 @@ class ExplorationState < Omega::State
             return
         end
 
-        if Omega::just_pressed(Gosu::KB_ESCAPE)
+        if Omega::just_pressed(Gosu::KB_ESCAPE) || Omega::just_pressed(299)
             $sounds["validate"].play();
             @substate = QuestState.new
             @substate.load(true, true)

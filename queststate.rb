@@ -40,21 +40,21 @@ class QuestState < Omega::State
     end
 
     def update
-        if Omega::just_pressed(Gosu::KB_RIGHT)
+        if Omega::just_pressed(Gosu::KB_RIGHT) || Omega::pressed(Gosu::GP_0_RIGHT)
             @c_quest += 1
             @c_quest %= ($quests_maps.size + 1)
             @c_quest = 1 if @c_quest == 0
             $sounds["select"].play()
             load(false)
             return
-        elsif Omega::just_pressed(Gosu::KB_LEFT)
+        elsif Omega::just_pressed(Gosu::KB_LEFT) || Omega::pressed(Gosu::GP_0_LEFT)
             @c_quest -= 1
             @c_quest %= $quests_maps.size
             @c_quest = $quests_maps.size if @c_quest == 0
             $sounds["select"].play()
             load(false)
             return
-        elsif Omega::just_pressed(Gosu::KB_ESCAPE)
+        elsif Omega::just_pressed(Gosu::KB_ESCAPE) || Omega::just_pressed(299)
             @finished = true
             $sounds["cancel"].play()
         end

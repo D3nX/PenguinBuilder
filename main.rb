@@ -120,7 +120,7 @@ class Game < Omega::RenderWindow
             j = 0
             loop do
                 path = "assets/maps/quests/quest_#{i}/quest_#{i}_layer_#{j}.csv"
-                if File.exists?(path)
+                if File.exist?(path)
                     $quests_maps[i - 1].load_csv_layer(path)
                 else
                     break
@@ -132,7 +132,7 @@ class Game < Omega::RenderWindow
 
     def load
         load_quests_map()
-        Omega.set_state(CutScene.new)
+        Omega.set_state(WorldMapState.new)
     end
    
 end
